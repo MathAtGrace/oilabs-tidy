@@ -179,7 +179,7 @@ ggplot(data = arbuthnot, aes(x = year, y = girls)) +
 
 Use the plot to address the following question:
 
-1.  Is there an apparent trend in the number of girls baptized over the years? How would you describe it? (To ensure that your lab report is comprehensive, be sure to include the code needed to make the plot as well as your written interpretation.)
+1.  Is there an apparent trend in the number of girls baptized over the years? How would you describe it? (To ensure that your lab report is comprehensive, be sure to include the code needed to make the plot as well as your written interpretation *using full sentences*.)
 
 You might wonder how you are supposed to know the syntax for the `ggplot()` function. Thankfully, `R` documents all of its functions extensively. To learn what a function does and how to use it (e.g. the function's arguments), just type in a question mark followed by the name of the function that you're interested in into the console. Type the following in your console:
 
@@ -217,6 +217,11 @@ arbuthnot <- arbuthnot %>%
 This code has a lot of new pieces to it, so let's break it down. In the first line we are doing two things, (1) adding a new `total` column to this updated data frame, and (2) overwriting the existing `arbutnot` data frame with an updated data frame that includes the new `total` column. We are able to chain these two processes together using the **piping** (`%>%`) operator. The piping operator takes the output of the previous expression and "pipes it" into the first argument of the next expression.
 
 To continue our analogy with mathematical functions, `x %>% f(y)` is equivalent to `f(x, y)`. Connecting `arbuthnot` and `mutate(total = boys + girls)` with the pipe operator is the same as typing `mutate(arbuthnot, total = boys + girls)`, where `arbuthnot` becomes the first argument included in the `mutate()` function.
+
+Now let's view our `arbuthnot` data frame with the new column we created:
+```{r}
+View(arbuthnot)
+```
 
 ::: {#boxedtext}
 **A note on piping:** Note that we can read these two lines of code as the following:
@@ -314,7 +319,9 @@ data(present)
 
 3.  Make a plot that displays the proportion of boys born over time. What do you see? Does Arbuthnot's observation about boys being born in greater proportion than girls hold up in the U.S.? Include the plot in your response. *Hint:* You should be able to reuse your code from Exercise 3 above, just replace the name of the data frame.
 
-4.  In what year did we see the most total number of births in the U.S.? *Hint:* First calculate the totals and save it as a new variable. Then, sort your dataset in descending order based on the `total` column. You can do this interactively in the data viewer by clicking on the arrows next to the variable names. To include the sorted result in your report you will need to use two new functions. First we use `arrange()` to sorting the variable. Then we can arrange the data in a descending order with another function, `desc()`, for descending order. The sample code is provided below.
+4.  Create a new variable for the `present` data called `total` that adds up boys and girls just like we did with arbuthnot's.  For this question, you only need to present the code you used as an code chunk.
+
+5.  In what year did we see the most total number of births in the U.S.? *Hint:* Sort your dataset in descending order based on the `total` column. You can do this interactively in the data viewer by clicking on the arrows next to the variable names. To include the sorted result in your report you will need to use two new functions. First we use `arrange()` to sorting the variable. Then we can arrange the data in a descending order with another function, `desc()`, for descending order. The sample code is provided below.
 
 ```{r sample-arrange, eval=FALSE}
 present %>%
@@ -325,9 +332,9 @@ These data come from reports by the Centers for Disease Control. You can learn m
 
 ### Bonus questions for understanding R and RStudio
 
-5.  In your lab report, use complete sentence(s) to tell me when you need to intall packages and when you need to load packages with the `library` function.
+5.  Use complete sentence(s) to tell me when you need to intall packages and when you need to load packages with the `library` function.
 
-6.  In your lab report, use complete sentence(s) to tell me the three ways to view data.
+6.  Use complete sentence(s) to tell me the three ways to view data.
 
 ## Resources for learning R and working in RStudio
 
