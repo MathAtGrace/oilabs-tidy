@@ -1,0 +1,109 @@
+---
+title: "Lab 1: Intro to R"
+author: "Author Name"
+date: "`r Sys.Date()`"
+output: openintro::lab_report
+---
+
+```{r load-packages, message=FALSE}
+library(tidyverse)
+library(openintro)
+```
+
+### Exercise 1
+
+#### Question:
+What command would you use to extract just the counts of girls baptized?  In these lab reports, also use complete sentences and the text -> code -> text -> code pattern described in the video above.
+
+#### Answer:
+We would use this command:
+
+```{r view-girls-counts}
+arbuthnot$girls
+```
+
+#### Points
+3 points for the correct code.  1 point for at least one sentence that uses correct grammar and punctuation.  (4 points total)
+
+### Exercise 2
+
+#### Question:
+Is there an apparent trend in the number of girls baptized over the years? How would you describe it? (To ensure that your lab report is comprehensive, be sure to include the code needed to make the plot as well as your written interpretation.)
+
+#### Answer:
+The text of answers may vary.    
+```{r trend-girls}
+ggplot(arbuthnot, aes(x = year, y = girls)) +
+  geom_line()
+```
+
+#### Points
+2 points for saying something correct (take off 0.5 - 1 point if answer is vague).  Be wary of well polished answers because answers to these labs may exist online.
+
+1 point for communication (complete sentences, spelling, grammar)
+
+3 points for the plot (dot plot is also fine)
+
+(6 total)
+
+### Exercise 3
+
+#### Question
+Now, generate a plot of the proportion of boys born over time. What do you see?
+
+#### Answer
+Text of answers may vary.
+
+```{r plot-prop-boys-arbuthnot}
+arbuthnot <- arbuthnot %>%
+  mutate(total = boys + girls)
+arbuthnot <- arbuthnot %>%
+  mutate(boy_proportion = boys / total)
+ggplot(arbuthnot, aes(x = year, y = boy_proportion)) +
+  geom_point()
+```
+
+#### Points
+2 points for saying something correct (take off 0.5 - 1 point if answer is vague).  Be wary of well polished answers because answers to these labs may exist online.
+
+1 point for communication (complete sentences, spelling, grammar)
+
+3 points for the plot (line plot is also fine)
+
+(6 total)
+
+### Exercise 4
+
+Insert any text here.
+
+```{r dim-present}
+# Insert code for Exercise 4 here
+```
+
+
+### Exercise 5
+
+Insert any text here.
+
+```{r count-compare}
+# Insert code for Exercise 5 here
+```
+
+
+### Exercise 6
+
+Insert any text here.
+
+```{r plot-prop-boys-present}
+# Insert code for Exercise 6 here
+```
+
+
+### Exercise 7
+
+Insert any text here.
+
+```{r find-max-total}
+# Insert code for Exercise 7 here
+```
+
