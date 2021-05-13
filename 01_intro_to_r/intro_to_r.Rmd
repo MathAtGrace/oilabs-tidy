@@ -329,6 +329,12 @@ data(present)
 
 5.  In what year did we see the most total number of births in the U.S.? *Hint:* Sort your dataset in descending order based on the `total` column. You can do this interactively in the data viewer by clicking on the arrows next to the variable names. To include the sorted result in your report you will need to use two new functions. First we use `arrange()` to sorting the variable. Then we can arrange the data in a descending order with another function, `desc()`, for descending order. The sample code is provided below.
 
+```{r hidden-total, echo= FALSE, eval=TRUE}
+present <- present %>%
+  mutate(total = boys + girls)
+```
+
+
 ```{r sample-arrange, eval=FALSE}
 present %>%
   arrange(desc(total))
