@@ -13,6 +13,7 @@ output:
 knitr::opts_chunk$set(eval = TRUE, results = FALSE)
 library(tidyverse)
 library(openintro)
+library(vembedr)
 ```
 
 ## Learning Objectives
@@ -75,7 +76,9 @@ We will be using R Markdown to create reproducible lab reports. See the followin
 
 [**Why use R Markdown for Lab Reports?**](https://youtu.be/lNWVQ2oxNho)
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/lNWVQ2oxNho" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+```{r why_R, results=TRUE, echo=FALSE}
+embed_url("https://www.youtube.com/watch?v=lNWVQ2oxNho")
+```
 
 
 [**Using R Markdown for Lab Reports in RStudio**](https://youtu.be/o0h-eVABe9M) <iframe width="560" height="315" src="https://www.youtube.com/embed/o0h-eVABe9M" frameborder="0" allowfullscreen></iframe>
