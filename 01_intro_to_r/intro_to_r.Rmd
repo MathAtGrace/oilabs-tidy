@@ -73,7 +73,10 @@ We are choosing to use the tidyverse package because it consists of a set of pac
 
 We will be using R Markdown to create reproducible lab reports. See the following videos describing why and how:
 
-[**Why use R Markdown for Lab Reports?**](https://youtu.be/lNWVQ2oxNho) <iframe width="560" height="315" src="https://www.youtube.com/embed/lNWVQ2oxNho" frameborder="0" allowfullscreen></iframe>
+[**Why use R Markdown for Lab Reports?**](https://youtu.be/lNWVQ2oxNho)
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/lNWVQ2oxNho" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 
 [**Using R Markdown for Lab Reports in RStudio**](https://youtu.be/o0h-eVABe9M) <iframe width="560" height="315" src="https://www.youtube.com/embed/o0h-eVABe9M" frameborder="0" allowfullscreen></iframe>
 
