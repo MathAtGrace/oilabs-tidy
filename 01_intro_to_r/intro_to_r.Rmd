@@ -80,6 +80,10 @@ We will be using R Markdown to create reproducible lab reports. See the followin
 embed_url("https://www.youtube.com/watch?v=lNWVQ2oxNho")
 ```
 
+```{r how-to-lab, results=TRUE, echo=FALSE}
+embed_url("https://youtu.be/SXFYz5sNnbE")
+```
+
 
 [**Using R Markdown for Lab Reports in RStudio**](https://youtu.be/o0h-eVABe9M) <iframe width="560" height="315" src="https://www.youtube.com/embed/o0h-eVABe9M" frameborder="0" allowfullscreen></iframe>
 

@@ -1,0 +1,115 @@
+---
+title: "Lab 2 Answers"
+author: "Dr. Johnson"
+date: "`r Sys.Date()`"
+output: openintro::lab_report
+---
+
+```{r load-packages, message=FALSE}
+library(tidyverse)
+library(openintro)
+source("http://www.openintro.org/stat/data/cdc.R")
+```
+
+
+## Exercise 1
+
+How many cases are there in this data set?  How many variables?  For each 
+    variable, identify its data type (e.g. categorical, categorical ordinal,
+    numerical discrete, or numerical continuous).
+
+### Answer:
+There are 20,000 cases and 9 variables.  The variables are
+
+  - `genhlth` which is categorical
+  - `exerany` Which is categorical, because even though it is numbers, the number 1 stands for `TRUE` and 0 stands for `FALSE.`
+  - `hlthplan` Which is categorical, because even though it is numbers, the number 1 stands for `TRUE` and 0 stands for `FALSE.`
+  - `smoke100` Which is categorical, because even though it is numbers, the number 1 stands for `TRUE` and 0 stands for `FALSE.`
+  - `height` which is numerical.
+  - `weight` which is numerical.
+  - `wtdesire` which is numerical.
+  - `age` which is numerical.
+  - `gender` which is categorical
+
+```{r code-chunk-label}
+glimpse(cdc)
+```
+
+### Grading
+
+1 point per aspect of the data (rows, columns, and each variable).  Code is not necessary for this problem.
+
+## Exercise 2
+Do the following.  As long as you are clear about which part you are answering, you only need to show working code that gives the answer to get full credit.
+
+  a. Use the summary function with the variable `height` and compute the interquartile range.
+  b. Use the summary function with the variable `weight` and compute the interquartile range.
+  c. Compute the relative frequency distribution for `gender`.
+  d. Compute the relative frequency distribution for `exerany.`
+  e. How many males are in the sample?
+  f. What proportion of the sample reports being in excellent health?
+
+### Answer:
+
+  a. Use the summary function with the variable `height` and compute the interquartile range.
+```{r 2a}
+summary(cdc$height)
+
+70 - 64
+```
+  
+  b. Use the summary function with the variable `weight` and compute the interquartile range.
+```{r 2b}
+summary(cdc$weight)
+
+190-140
+```
+  c. Compute the relative frequency distribution for `gender`.
+```{r 2c}
+table(cdc$gender)/20000
+```
+
+  d. Compute the relative frequency distribution for `exerany.`
+```{r 2d}
+table(cdc$exerany)/20000
+```
+  e. How many males are in the sample?
+```{r 2e}
+table(cdc$gender)
+```
+So there are 9569 males in the sample.
+
+  f. What proportion of the sample reports being in excellent health?
+```{r 2f}
+table(cdc$genhlth)
+```
+So 4657 report being in excellent health.
+
+### Grading
+
+One point for the correctness of each line of code.  Their code can be different than mine, but it must produce the answer.
+
+## Exercise 3
+What does the mosaic plot reveal about smoking habits and gender? Use a complete sentence.
+
+### Answer
+Any complete sentence or two that accurately describes the plot below is fine. Something to look for is whether they are using words such as "proportion" or "men or more *likely* to smoke than women," and *not* talking about total numbers.
+```{r}
+mosaicplot(table(cdc$gender,cdc$smoke100))
+```
+
+### Grading:
+3 points for correctness, 1 point for complete sentences with correct grammar.
+
+## Excercise 4
+Create a new object called under23_and_smoke that contains all observations of respondents under the age of 23 that have smoked 100 cigarettes in their lifetime. Write the command you used to create the new object as the answer to this exercise.
+
+### Answer
+
+```{r}
+under23_and_smoke <- subset(cdc, smoke100 == 1 & age < 23)
+```
+
+## Grading
+
+3 points for correct code
