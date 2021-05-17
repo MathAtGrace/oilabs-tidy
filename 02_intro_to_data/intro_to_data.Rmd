@@ -107,6 +107,8 @@ Let's think about some questions we might want to answer with these data:
 -   How do departure delays vary by month?
 -   Which of the three major NYC airports has the best on time percentage for departing flights?
 
+1.  Using what we learned from section 1.2 from the textbook, what kind of variable is the variable `dep_delay`?  What kind of variable is `carrier`? (Remember to use complete sentences in your lab reports)
+
 ## Analysis
 
 ### Lab report
@@ -136,7 +138,7 @@ ggplot(data = nycflights, aes(x = dep_delay)) +
   geom_histogram(binwidth = 150)
 ```
 
-1.  Look carefully at these three histograms. How do they compare? Are features revealed in one that are obscured in another?
+2.  Put each of the three histograms into your lab report. How do they compare? Are features revealed in one that are obscured in another?
 
 If you want to visualize only on delays of flights headed to Los Angeles, you need to first `filter` the data for flights with that destination (`dest == "LAX"`) and then make a histogram of the departure delays of only those flights.
 
@@ -206,8 +208,7 @@ sfo_feb_flights <- nycflights %>%
 Note that you can separate the conditions using commas if you want flights that are both headed to SFO **and** in February.
 If you are interested in either flights headed to SFO **or** in February, you can use the `|` instead of the comma.
 
-1.  Create a new data frame that includes flights headed to SFO in February, and save this data frame as `sfo_feb_flights`.
-    How many flights meet these criteria?
+1.  Copy the code from the code block above into a code block in your lab report.  Write another line that will tell you how many flights are in this data frame.  (Hint: it's a command that is present somewhere above)
 
 2.  Describe the distribution of the **arrival** delays of these flights using a histogram and appropriate summary statistics.
     **Hint:** The summary statistics you use should depend on the shape of the distribution.
@@ -301,23 +302,15 @@ ggplot(data = nycflights, aes(x = origin, fill = dep_type)) +
 
 ## More Practice
 
-1.  Mutate the data frame so that it includes a new variable that contains the average speed, `avg_speed` traveled by the plane for each flight (in mph).
-    **Hint:** Average speed can be calculated as distance divided by number of hours of travel, and note that `air_time` is given in minutes.
 
-2.  Make a scatterplot of `avg_speed` vs. `distance`.
-    Describe the relationship between average speed and distance.
-    **Hint:** Use `geom_point()`.
-
-3.  Replicate the following plot.
-    **Hint:** The data frame plotted only contains flights from American Airlines, Delta Airlines, and United Airlines, and the points are `color`ed by `carrier`.
-    Once you replicate the plot, determine (roughly) what the cutoff point is for departure delays where you can still expect to get to your destination on time.
-
-```{r plot-to-replicate, echo=FALSE, fig.show="asis", fig.width=7, fig.height=4}
-dl_aa_ua <- nycflights %>%
-  filter(carrier == "AA" | carrier == "DL" | carrier == "UA")
-ggplot(data = dl_aa_ua, aes(x = dep_delay, y = arr_delay, color = carrier)) +
-  geom_point()
+1.  Consider the code below.  Tell me what the new variables `air_time_hr` and `ave_speed` describe, and what units they are measured in.
+```{r 8}
+nycflights <- nycflights %>%
+  mutate(air_time_hr = air_time / 60,
+         ave_speed = distance/air_time_hr)
 ```
+
+
 
 ------------------------------------------------------------------------
 
