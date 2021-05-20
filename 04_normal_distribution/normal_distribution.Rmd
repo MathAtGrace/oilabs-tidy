@@ -43,8 +43,6 @@ Let's take a quick peek at the first few rows of the data.
 Either you can use `glimpse` like before, or `head` to do this.
 
 ```{r load-data, results=TRUE}
-library(tidyverse)
-library(openintro)
 head(fastfood)
 ```
 
@@ -56,12 +54,12 @@ Let's first focus on just products from McDonalds and Dairy Queen.
 
 ```{r male-female}
 mcdonalds <- fastfood %>%
-  filter(restaurant == "McDonalds")
+  filter(restaurant == "Mcdonalds")
 dairy_queen <- fastfood %>%
   filter(restaurant == "Dairy Queen")
 ```
 
-1.  Make a plot (or plots) to visualize the distributions of the amount of calories from fat of the options from these two restaurants. How do their centers, shapes, and spreads compare?
+1.  For both the `mcdonalds` and `dairy_queen` data sets, plot the variable `cal_from_fat`, and describe the center, shape, and spread of each.  Make sure to use numbers when applicable in your descriptions.  If your memory of how to plot data is rusty, go back to labs 1 and 2.
 
 ## The normal distribution
 
@@ -88,7 +86,7 @@ You can verify this by comparing the frequency histogram you constructed earlier
 ggplot(data = dairy_queen, aes(x = cal_fat)) +
         geom_blank() +
         geom_histogram(aes(y = ..density..)) +
-        stat_function(fun = dnorm, args = c(mean = dqmean, sd = dqsd), col = "tomato")
+        stat_function(fun = dnorm, args = c(mean = dqmean, sd = dqsd), col = "red")
 ```
 
 After initializing a blank plot with `geom_blank()`, the `ggplot2` package (within the `tidyverse`) allows us to add additional layers.
@@ -98,7 +96,7 @@ We specify that we want the curve to have the same mean and standard deviation a
 The argument `col` simply sets the color for the line to be drawn.
 If we left it out, the line would be drawn in black.
 
-2.  Based on the this plot, does it appear that the data follow a nearly normal distribution?
+2.  Put this plot into your lab report, and describe at least one similarity and one difference between the histogram of actual data and the theoretical normal distribution.
 
 ## Evaluating the normal distribution
 
@@ -107,10 +105,10 @@ An alternative approach involves constructing a normal probability plot, also ca
 
 ```{r qq}
 ggplot(data = dairy_queen, aes(sample = cal_fat)) + 
-  geom_line(stat = "qq")
+  stat_qq() + 
+  stat_qq_line()
 ```
 
-This time, you can use the `geom_line()` layer, while specifying that you will be creating a Q-Q plot with the `stat` argument.
 It's important to note that here, instead of using `x` instead `aes()`, you need to use `sample`.
 
 The x-axis values correspond to the quantiles of a theoretically normal curve with mean 0 and standard deviation 1 (i.e., the standard normal distribution).
@@ -123,17 +121,18 @@ The plot for Dairy Queen's calories from fat shows points that tend to follow th
 You're left with the same problem that we encountered with the histogram above: how close is close enough?
 
 A useful way to address this question is to rephrase it as: what do probability plots look like for data that I *know* came from a normal distribution?
-We can answer this by simulating data from a normal distribution using `rnorm`.
+We can answer this by simulating data from a normal distribution using `rnorm` and putting this new simulated variable into our dataframe.
 
 ```{r sim-norm}
-sim_norm <- rnorm(n = nrow(dairy_queen), mean = dqmean, sd = dqsd)
+dairy_queen <- dairy_queen %>%
+  mutate(sim_cal_fat = rnorm(n = nrow(dairy_queen), mean = dqmean, sd = dqsd))
 ```
 
-The first argument indicates how many numbers you'd like to generate, which we specify to be the same number of menu items in the `dairy_queen` data set using the `nrow()` function.
+The first argument of `rnorm` indicates how many numbers you'd like to generate, which we specify to be the same number of menu items in the `dairy_queen` data set using the `nrow()` function.
 The last two arguments determine the mean and standard deviation of the normal distribution from which the simulated sample will be generated.
 You can take a look at the shape of our simulated data set, `sim_norm`, as well as its normal probability plot.
 
-3.  Make a normal probability plot of `sim_norm`. Do all of the points fall on the line? How does this plot compare to the probability plot for the real data? (Since `sim_norm` is not a dataframe, it can be put directly into the `sample` argument and the `data` argument can be dropped.)
+3.  Make a normal probability plot of `sim_cal_fat`. Do all of the points fall on the line? How does this plot compare to the probability plot for the real data?
 
 Even better than comparing the original plot to a single plot generated from a normal distribution is to compare it to many more plots using the following function.
 It shows the Q-Q plot corresponding to the original data in the top left corner, and the Q-Q plots of 8 different simulated normal data.
@@ -143,10 +142,9 @@ It may be helpful to click the zoom button in the plot window.
 qqnormsim(sample = cal_fat, data = dairy_queen)
 ```
 
-4.  Does the normal probability plot for the calories from fat look similar to the plots created for the simulated data?
-    That is, do the plots provide evidence that the female heights are nearly normal?
+4.  Create the plot in your lab report with the code given above. Does the normal probability plot for the calories from fat look similar to the plots created for the simulated data?  That is, do the plots provide evidence that the distribution of calories from fat of the menu items are nearly normal?
 
-5.  Using the same technique, determine whether or not the calories from McDonald's menu appear to come from a normal distribution.
+5.  Using the same technique, create the plot and determine whether or not the calories from McDonald's menu appear to come from a normal distribution.
 
 ## Normal probabilities
 
@@ -186,15 +184,15 @@ The closer that your distribution is to being normal, the more accurate the theo
 ## More Practice
 
 7.  Now let's consider some of the other variables in the dataset.
-    Out of all the different restaurants, which ones' distribution is the closest to normal for sodium?
+    Out of all the different restaurants, which two or three or four distribution are the closest to normal for cholesterol?  The code below gives you the list of restaurants in this data.
+    
+```{r}
+unique(fastfood$restaurant)
+```
+
 
 8.  Note that some of the normal probability plots for sodium distributions seem to have a stepwise pattern.
     why do you think this might be the case?
-
-9.  As you can see, normal probability plots can be used both to assess normality and visualize skewness.
-    Make a normal probability plot for the total carbohydrates from a restaurant of your choice.
-    Based on this normal probability plot, is this variable left skewed, symmetric, or right skewed?\
-    Use a histogram to confirm your findings.
 
 ------------------------------------------------------------------------
 

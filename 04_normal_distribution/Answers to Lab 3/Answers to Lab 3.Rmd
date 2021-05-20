@@ -1,0 +1,172 @@
+---
+title: "Lab Name"
+author: "Author Name"
+date: "`r Sys.Date()`"
+output: openintro::lab_report
+---
+
+```{r load-packages, message=FALSE}
+library(tidyverse)
+library(openintro)
+```
+
+## Exercise 1
+
+For both the `mcdonalds` and `dairy_queen` data sets, plot the variable `cal_from_fat`, and describe the center, shape, and spread of each.  Make sure to use numbers when applicable in your descriptions.  If your memory of how to plot data is rusty, go back to labs 1 and 2.
+
+### Answer
+
+The plot of McDonald's fat from calories is below.
+```{r 1a}
+mcdonalds <- fastfood %>%
+  filter(restaurant == "Mcdonalds")
+dairy_queen <- fastfood %>%
+  filter(restaurant == "Dairy Queen")
+
+ggplot(mcdonalds, aes(x = cal_fat)) +
+  geom_histogram()
+```
+
+The center could be described by the mean or the median
+```{r 1b}
+mean(mcdonalds$cal_fat)
+median(mcdonalds$cal_fat)
+```
+
+The shape is unimodal and right-skewed.  The spread could be described by the standard deviation or the IQR
+```{r 1c}
+sd(mcdonalds$cal_fat)
+IQR(mcdonalds$cal_fat)
+```
+
+The plot of Dairy Queen's fat from calories is below.
+```{r 1d}
+ggplot(dairy_queen, aes(x = cal_fat)) +
+  geom_histogram()
+```
+
+The center could be described by the mean or the median
+```{r 1e}
+mean(dairy_queen$cal_fat)
+median(dairy_queen$cal_fat)
+```
+
+The shape is unimodal and right-skewed.  The spread could be described by the standard deviation or the IQR
+```{r 1f}
+sd(dairy_queen$cal_fat)
+IQR(dairy_queen$cal_fat)
+```
+
+### Grading
+2 points for each plot.  1 point for using words that help distinguish betwen the plots.  1 point for medain or mean for each.  1 point for unimodal for each.  1 point for right skewed for each. 1 point for standard deviation or IQR for each.
+
+## Exercise 2
+Put this plot into your lab report, and describe at least one similarity and one difference between the histogram of actual data and the theoretical normal distribution.
+
+### Answer
+```{r hist-height}
+dqmean <- mean(dairy_queen$cal_fat)
+dqsd   <- sd(dairy_queen$cal_fat)
+
+ggplot(data = dairy_queen, aes(x = cal_fat)) +
+        geom_blank() +
+        geom_histogram(aes(y = ..density..)) +
+        stat_function(fun = dnorm, args = c(mean = dqmean, sd = dqsd), col = "red")
+```
+Answers will vary.
+
+### Grading
+1 point for the plot. Give 1 point for any answer about similarities that makes sense.  Give 1 point for any answer about differences that makes sense.  1 point for complete sentences.
+
+## Exercise 3
+Make a normal probability plot of `sim_cal_fat`. Do all of the points fall on the line? How does this plot compare to the probability plot for the real data?
+
+### Answer
+
+```{r 3}
+dairy_queen <- dairy_queen %>%
+  mutate(sim_cal_fat = rnorm(n = nrow(dairy_queen), mean = dqmean, sd = dqsd))
+
+ggplot(data = dairy_queen, aes(sample = sim_cal_fat)) + 
+  stat_qq() + 
+  stat_qq_line()
+```
+Not all the points fall on the line.  Answers about how the plots compare will vary.
+
+### Grading
+3 points for the plot.  Because of randomness, their points might be different than mine.  1 point for saying that not all points fall on the line.  1 point for any comparison of the two plots that makes sense.  1 point for complete sentences.
+
+
+## Exercise 4
+Create the plot in your lab report with the code given above. Does the normal probability plot for the calories from fat look similar to the plots created for the simulated data?  That is, do the plots provide evidence that the distribution of calories from fat of the menu items are nearly normal?
+
+### Answer
+Answers will vary.  The plot they are describing is below.
+```{r}
+qqnormsim(sample = cal_fat, data = dairy_queen)
+```
+
+### Grading
+1 point for the plot. 2 points for anything that makes sense in relation to the plot above. 1 point for full sentences.
+
+## Exercise 5
+Using the same technique, determine whether or not the calories from McDonald’s menu appear to come from a normal distribution.
+
+### Answer
+Answers will vary.  The plot they are describing is below.
+```{r}
+qqnormsim(sample = cal_fat, data = mcdonalds)
+```
+### Grading
+2 point for the plot. 2 points for anything that makes sense in relation to the plot above. 1 point for full sentences.
+
+## Exercise 6
+Write out two probability questions that you would like to answer about any of the restaurants in this dataset. Calculate those probabilities using both the theoretical normal distribution as well as the empirical distribution (four probabilities in all). Which one had a closer agreement between the two methods?
+
+### Answer
+Answers will vary
+
+### Grading
+1 point for stating each question.  2 points for answering each question using R code and the theoretical normal distribution.  2 points for answering each question using R code and the actual distribution. 1 point for complete sentences and good grammar.
+
+## Exercise 7
+
+Now let’s consider some of the other variables in the dataset. Out of all the different restaurants, which two three or four distribution is the closest to normal for cholesterol?
+
+### Answer
+
+To my eye, Arby's, Dairy Queen, and Taco Bell are the best, with Subway close behind.  I would mark an answer correct if it contained any two, three, or four of them.  I'll plot all of them below for convenience of grading.
+
+```{r}
+rests = unique(fastfood$restaurant)
+thing = "cholesterol"
+for (rest in rests){
+  menu <- fastfood %>%
+    filter(restaurant == rest) %>%
+    pull(thing)
+  m <- mean(menu)
+  s <- sd(menu)
+  p <- menu %>%
+    data_frame() %>%
+    ggplot(aes(sample = menu)) + 
+    stat_qq() + 
+    stat_qq_line() +
+    labs(title = str_glue("{rest} {thing}"))
+  print(p)
+}
+```
+
+### Grading
+
+7 points for correctness.  Take away 4 if only including one of the four listed above.  If answer includes a restaurant that is not one of the four listed above, take away points based on how much less those distributions match normality.
+
+## Exercise 8
+Note that some of the normal probability plots for sodium distributions seem to have a stepwise pattern. why do you think this might be the case?
+
+### Answer
+
+Answers will vary.  Anything that mentions small sample size or multiple items with the same amount of cholesterol is fine.
+
+### Grading
+
+2 points for correctness, and be generous with partial credit.  1 point for full sentences and correct grammar.
