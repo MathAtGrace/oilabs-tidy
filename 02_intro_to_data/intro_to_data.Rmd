@@ -210,7 +210,7 @@ If you are interested in either flights headed to SFO **or** in February, you ca
 
 1.  Copy the code from the code block above into a code block in your lab report.  Write another line that will tell you how many flights are in this data frame.  (Hint: it's a command that is present somewhere above)
 
-2.  Describe the distribution of the **arrival** delays of these flights using a histogram and appropriate summary statistics.
+2.  Describe the distribution of the **arrival** delays of these flights by including a histogram, using descriptive words we learned in section 2.1, and appropriate summary statistics.
     **Hint:** The summary statistics you use should depend on the shape of the distribution.
 
 Another useful technique is quickly calculating summary statistics for various groups in your data frame.

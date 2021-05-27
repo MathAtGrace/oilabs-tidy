@@ -84,7 +84,7 @@ sfo_feb_flights %>%
 ```
 
 ### Grading
-3 points for the histogram (binwidth can be different).  1 point for using words to introduce the histogram.  2 points for "unimodal."  2 points for "right-skewed."  1 point for "potential outlier."  1 point for computing the median.  1 point for computing the IQR.  1 point for copmlete sentences and good grammar.
+3 points for the histogram (binwidth can be different).  1 point for using words to introduce the histogram.  2 points for "unimodal."  2 points for "right-skewed."  1 point for "potential outlier."  1 point for computing the median.  1 point for computing the IQR.  1 point for complete sentences and good grammar.
 
 
 ## Exercise 5
