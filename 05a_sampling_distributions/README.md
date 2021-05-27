@@ -1,1 +1,6 @@
-Depoloyed app at https://openintro.shinyapps.io/sampling_distributions/.
+Original depoloyed app at https://openintro.shinyapps.io/sampling_distributions/.
+
+Ours deployed at https://ryan-johnson-grace.shinyapps.io/sampling_distributions/
+but exercise CSS is not working.
+
+We use https://www.shinyapps.io/admin/#/dashboard
