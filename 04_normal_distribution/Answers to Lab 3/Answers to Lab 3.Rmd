@@ -1,6 +1,6 @@
 ---
-title: "Lab Name"
-author: "Author Name"
+title: "Lab 3 Answers"
+author: "Dr. Ryan Johnson"
 date: "`r Sys.Date()`"
 output: openintro::lab_report
 ---
@@ -12,7 +12,7 @@ library(openintro)
 
 ## Exercise 1
 
-For both the `mcdonalds` and `dairy_queen` data sets, plot the variable `cal_from_fat`, and describe the center, shape, and spread of each.  Make sure to use numbers when applicable in your descriptions.  If your memory of how to plot data is rusty, go back to labs 1 and 2.
+For both the `mcdonalds` and `dairy_queen` data sets, plot the variable `cal_from_fat`, and describe the center, shape, and spread of each (i.e. use words from section 2.1).  Make sure to use numbers when applicable in your descriptions.  If your memory of how to plot data is rusty, go back to labs 1 and 2.
 
 ### Answer
 
@@ -60,6 +60,21 @@ IQR(dairy_queen$cal_fat)
 ### Grading
 2 points for each plot.  1 point for using words that help distinguish betwen the plots.  1 point for medain or mean for each.  1 point for unimodal for each.  1 point for right skewed for each. 1 point for standard deviation or IQR for each.
 
+```{r points-1}
+points = sum(2, #plot mc
+  2, #plot dq
+  1, #distinguish
+  2, #mean median mc
+  2, #mean medean dq
+  1, #unimodal mc
+  1, #unimodal dq
+  1, #right skewed mc
+  1, #right skewed dq
+  1, #sd or IQR mc
+  1)#sd or IQR dq
+```
+
+
 ## Exercise 2
 Put this plot into your lab report, and describe at least one similarity and one difference between the histogram of actual data and the theoretical normal distribution.
 
@@ -78,6 +93,11 @@ Answers will vary.
 ### Grading
 1 point for the plot. Give 1 point for any answer about similarities that makes sense.  Give 1 point for any answer about differences that makes sense.  1 point for complete sentences.
 
+```{r points-2}
+points = points + 1 + 1 + 1 + 1
+```
+
+
 ## Exercise 3
 Make a normal probability plot of `sim_cal_fat`. Do all of the points fall on the line? How does this plot compare to the probability plot for the real data?
 
@@ -91,11 +111,15 @@ ggplot(data = dairy_queen, aes(sample = sim_cal_fat)) +
   stat_qq() + 
   stat_qq_line()
 ```
+
 Not all the points fall on the line.  Answers about how the plots compare will vary.
 
 ### Grading
 3 points for the plot.  Because of randomness, their points might be different than mine.  1 point for saying that not all points fall on the line.  1 point for any comparison of the two plots that makes sense.  1 point for complete sentences.
 
+```{r points-3}
+points = points + 3 + 1 + 1 + 1
+```
 
 ## Exercise 4
 Create the plot in your lab report with the code given above. Does the normal probability plot for the calories from fat look similar to the plots created for the simulated data?  That is, do the plots provide evidence that the distribution of calories from fat of the menu items are nearly normal?
@@ -109,6 +133,10 @@ qqnormsim(sample = cal_fat, data = dairy_queen)
 ### Grading
 1 point for the plot. 2 points for anything that makes sense in relation to the plot above. 1 point for full sentences.
 
+```{r points-4}
+points = points + 1 + 2 + 1
+```
+
 ## Exercise 5
 Using the same technique, determine whether or not the calories from McDonald’s menu appear to come from a normal distribution.
 
@@ -117,8 +145,13 @@ Answers will vary.  The plot they are describing is below.
 ```{r}
 qqnormsim(sample = cal_fat, data = mcdonalds)
 ```
+
 ### Grading
 2 point for the plot. 2 points for anything that makes sense in relation to the plot above. 1 point for full sentences.
+
+```{r points-5}
+points = points + 2 + 2 + 1
+```
 
 ## Exercise 6
 Write out two probability questions that you would like to answer about any of the restaurants in this dataset. Calculate those probabilities using both the theoretical normal distribution as well as the empirical distribution (four probabilities in all). Which one had a closer agreement between the two methods?
@@ -128,6 +161,10 @@ Answers will vary
 
 ### Grading
 1 point for stating each question.  2 points for answering each question using R code and the theoretical normal distribution.  2 points for answering each question using R code and the actual distribution. 1 point for complete sentences and good grammar.
+
+```{r points-6}
+points = points + 2 + 4 + 1
+```
 
 ## Exercise 7
 
@@ -160,6 +197,10 @@ for (rest in rests){
 
 7 points for correctness.  Take away 4 if only including one of the four listed above.  If answer includes a restaurant that is not one of the four listed above, take away points based on how much less those distributions match normality.
 
+```{r points-7}
+points = points + 7
+```
+
 ## Exercise 8
 Note that some of the normal probability plots for sodium distributions seem to have a stepwise pattern. why do you think this might be the case?
 
@@ -170,3 +211,9 @@ Answers will vary.  Anything that mentions small sample size or multiple items w
 ### Grading
 
 2 points for correctness, and be generous with partial credit.  1 point for full sentences and correct grammar.
+
+```{r points-8}
+points = points + 2 + 1
+```
+
+## Total Points: `r points`

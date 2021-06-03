@@ -1,0 +1,32 @@
+---
+title: "Lab Name"
+author: "Author Name"
+date: "`r Sys.Date()`"
+output: openintro::lab_report
+---
+
+```{r load-packages, message=FALSE}
+library(tidyverse)
+library(openintro)
+library(infer)
+```
+
+### Exercise 1
+
+```{r code-chunk-label}
+global_monitor <- tibble(
+  scientist_work = c(rep("Benefits", 80000), rep("Doesn't benefit", 20000))
+)
+ggplot(global_monitor, aes(x = scientist_work)) +
+  geom_bar() +
+  labs(
+    x = "", y = "",
+    title = "Do you believe that the work scientists do benefit people like you?"
+  ) +
+  coord_flip() 
+```
+
+### Exercise 2
+
+...
+

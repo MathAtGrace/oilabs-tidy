@@ -12,35 +12,31 @@ output:
 
 ```{r global_options, include=FALSE}
 knitr::opts_chunk$set(eval = TRUE, results = FALSE, fig.show = "hide", message = FALSE)
-set.seed(1234)
+
 ```
 
 In this lab, you will investigate the ways in which the statistics from a random sample of data can serve as point estimates for population parameters.
 We're interested in formulating a *sampling distribution* of our estimate in order to learn about the properties of the estimate, such as its distribution.
-
-::: {#boxedtext}
-**Setting a seed:** We will take some random samples and build sampling distributions in this lab, which means you should set a seed at the start of your lab.
-If this concept is new to you, review the lab on probability.
-:::
 
 ## Getting Started
 
 ### Load packages
 
 In this lab, we will explore and visualize the data using the **tidyverse** suite of packages.
-We will also use the **infer** package for resampling.
+We will also use the **infer** package for resampling.  Only run the code below once in your console.
 
-```{r intall-infer}
+```{r intall-infer, eval=FALSE}
 install.packages("infer")
 ```
 
 
-Let's load the packages.
+Let's load the packages.  You'll want to add these lines to your lab report.  The last line will help us all have the same answers for our random samples.
 
 ```{r load-packages, message=FALSE}
 library(tidyverse)
 library(openintro)
 library(infer)
+set.seed(1234)
 ```
 
 ### Creating a reproducible lab report
@@ -56,7 +52,7 @@ A 2019 Gallup report states the following:
 >
 > **Source:** [World Science Day: Is Knowledge Power?](https://news.gallup.com/opinion/gallup/268121/world-science-day-knowledge-power.aspx)
 
-The Wellcome Global Monitor finds that 20% of people globally do not believe that the work scientists do benefits people like them.
+The Welcome Global Monitor finds that 20% of people globally do not believe that the work scientists do benefits people like them.
 In this lab, you will assume this 20% is a true population proportion and learn about how sample proportions can vary from sample to sample by taking smaller samples from the population.
 We will first create our population assuming a population size of 100,000.
 This means 20,000 (20%) of the population think the work scientists do does not benefit them personally and the remaining 80,000 think it does.
@@ -81,8 +77,6 @@ ggplot(global_monitor, aes(x = scientist_work)) +
   coord_flip() 
 ```
 
-1.  **Exercise** (for some reason I broke the formatting for exercises when I made changes to this lab -Dr. J) Add the plot from the code above into your lab report.
-
 We can also obtain summary statistics to confirm we constructed the data frame correctly.
 
 ```{r summ-stat-pop, results = TRUE}
@@ -90,6 +84,8 @@ global_monitor %>%
   count(scientist_work) %>%
   mutate(p = n /sum(n))
 ```
+
+1.   Add the plot and summary statistics code above into your lab report.
 
 ## The unknown sampling distribution
 
@@ -108,9 +104,7 @@ This command collects a simple random sample of size 50 from the `global_monitor
 This is similar to randomly drawing names from a hat that contains the names of all in the population.
 Working with these 50 names is considerably simpler than working with all 100,000 people in the population.
 
-2.  **Exercise** Describe the distribution of responses in this sample using the words we used from section 2.1. How does it compare to the distribution of responses in the population.
-
-If you're interested in estimating the proportion of all people who do not believe that the work scientists do benefits them, but you do not have access to the population data, your best single guess is the sample mean.
+If you're interested in estimating the proportion of all people who do not believe that the work scientists do benefits them, but you do not have access to the population data, your best single guess is the sample proportion.
 
 ```{r phat-samp1}
 samp1 %>%
@@ -118,7 +112,9 @@ samp1 %>%
   mutate(p_hat = n /sum(n))
 ```
 
-3.  **Exercise** How does your `p_hat` compare to the true proportion?
+2.   How does your `p_hat` compare to the true proportion?
+
+The code below will save our $\hat{p}_{\text{samp1}}$ for later under the name `samp1_p_hat`.
 
 ```{r inline-calc, include=FALSE}
 # For use inline below
@@ -133,11 +129,11 @@ samp1_p_hat <- samp1 %>%
 Depending on which 50 people you selected, your estimate could be a bit above or a bit below the true population proportion of `r samp1_p_hat`.
 In general, though, the sample proportion turns out to be a pretty good estimate of the true population proportion, and you were able to get it by sampling less than 1% of the population.
 
-4.  **Exercise** Would you expect the sample proportion to match the sample proportion of another student's sample? Why, or why not? If the answer is no, would you expect the proportions to be somewhat different or very different?
+3.   If you took a second sample of size 50, would you expect to get exactly the same results as the first time? Why, or why not? If the answer is no, would you expect the proportions to be somewhat different or very different?
 
-5. **Exercise** Take a second sample, also of size 50, and call it `samp2`. How does the sample proportion of `samp2` compare with that of `samp1`?
+4.  Take a second sample, also of size 50, and call it `samp2`. How does the sample proportion of `samp2` compare with that of `samp1`?
 
-6. **Exercise** Suppose we took two more samples, one of size 100 and one of size 1000. Which would you think would provide a more accurate estimate of the population proportion?
+5.  Suppose we took two more samples, one of size 100 and one of size 1000. Which would you think would provide a more accurate estimate of the population proportion?
 
 Not surprisingly, every time you take another random sample, you might get a different sample proportion.
 It's useful to get a sense of just how much variability you should expect when estimating the population mean this way.
@@ -148,7 +144,9 @@ Note that we specify that `replace = TRUE` since sampling distributions are cons
 
 ```{r iterate}
 sample_props50 <- global_monitor %>%
-                    rep_sample_n(size = 50, reps = 15000, replace = TRUE) %>%
+                    rep_sample_n(size = 50,
+                                 reps = 15000,
+                                 replace = TRUE) %>%
                     count(scientist_work) %>%
                     mutate(p_hat = n /sum(n)) %>%
                     filter(scientist_work == "Doesn't benefit")
@@ -168,7 +166,7 @@ ggplot(data = sample_props50, aes(x = p_hat)) +
 
 Next, you will review how this set of code works.
 
-7.  How many elements are there in `sample_props50`? Describe the sampling distribution, and be sure to specifically note its center. Make sure to include a plot of the distribution in your answer.
+6.  How many elements are there in `sample_props50`? Describe the sampling distribution, and be sure to specifically note its center. Make sure to include a plot of the distribution in your answer.
 
 
 ## Sample size and the sampling distribution
@@ -185,7 +183,7 @@ Because the sample proportion is an unbiased estimator, the sampling distributio
 
 In the remainder of this section, you will work on getting a sense of the effect that sample size has on your sampling distribution.
 
-8.  Use the app below to create sampling distributions of proportions of *Doesn't benefit* from samples of size 10, 50, and 100. Use 5,000 simulations. What does each observation in the sampling distribution represent? How does the mean, standard error, and shape of the sampling distribution change as the sample size increases? How (if at all) do these values change if you increase the number of simulations? (You do not need to include plots in your answer.)
+7.  Use the app below to create sampling distributions of proportions of *Doesn't benefit* from samples of size 10, 50, and 100. Use 5,000 simulations. What does each observation in the sampling distribution represent? How does the mean, standard error, and shape of the sampling distribution change as the sample size increases? How (if at all) do these values change if you increase the number of simulations (samples)? (You do not need to include plots in your answer.)
 
 ```{r shiny, echo=FALSE, eval=TRUE, results = TRUE}
 shinyApp(
@@ -283,27 +281,11 @@ shinyApp(
 
 ## More Practice
 
-So far, you have only focused on estimating the proportion of those you think the work scientists doesn't benefit them.
-Now, you'll try to estimate the proportion of those who think it does.
+8.  Use the app above to create sampling distributions of proportions of *Benefits* from samples of size 16 and 144. Use 5,000 simulations.  How much smaller is the SE for sample of size 144 compared to size 16?  How does this number relate to $\frac{144}{16} = 9$? 
 
-Note that while you might be able to answer some of these questions using the app, you are expected to write the required code and produce the necessary plots and summary statistics.
-You are welcome to use the app for exploration.
+A good double check for your answer to the question above is to look up the formula for $SE$ of a single categorical variable in your textbook.  Even though you're doing simulations, they should be pretty close to the theoretical methods, and the formula might help you see what I'm looking for in the second part of that question.
 
-9.  Take a sample of size 15 from the population and calculate the proportion of people in this sample who think the work scientists do enhances their lives.
-    Using this sample, what is your best point estimate of the population proportion of people who think the work scientists do enchances their lives?
-
-2.  Since you have access to the population, simulate the sampling distribution of proportion of those who think the work scientists do enchances their lives for samples of size 15 by taking 2000 samples from the population of size 15 and computing 2000 sample proportions.
-    Store these proportions in as `sample_props15`.
-    Plot the data, then describe the shape of this sampling distribution.
-    Based on this sampling distribution, what would you guess the true proportion of those who think the work scientists do enchances their lives to be?
-    Finally, calculate and report the population proportion.
-
-3.  Change your sample size from 15 to 150, then compute the sampling distribution using the same method as above, and store these proportions in a new object called `sample_props150`.
-    Describe the shape of this sampling distribution and compare it to the sampling distribution for a sample size of 15.
-    Based on this sampling distribution, what would you guess to be the true proportion of those who think the work scientists do enchances their lives?
-
-4.  Of the sampling distributions from 2 and 3, which has a smaller spread?
-    If you're concerned with making estimates that are more often close to the true value, would you prefer a sampling distribution with a large or small spread?
+9.  The success/failure condition is a little bit arbitrary.  Experiment with the sample size in the app above, and pick the sample size that you think should be the cut-off for when the sample-distribution is normal.  Is your number times 0.2 above or below 10?  Your number times 0.2 is what you think the success/failure condition should be: tell me why you think your number is best.
 
 ------------------------------------------------------------------------
 
