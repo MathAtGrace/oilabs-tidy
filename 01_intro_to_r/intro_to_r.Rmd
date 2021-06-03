@@ -85,8 +85,6 @@ embed_url("https://youtu.be/SXFYz5sNnbE")
 ```
 
 
-[**Using R Markdown for Lab Reports in RStudio**](https://youtu.be/o0h-eVABe9M) <iframe width="560" height="315" src="https://www.youtube.com/embed/o0h-eVABe9M" frameborder="0" allowfullscreen></iframe>
-
 To begin, in RStudio, go to New File -\> R Markdown... Then, choose "From Template" and then choose `Lab Report for OpenIntro Statistics Lab 1` from the list of templates.
 
 Going forward you should refrain from typing your code directly in the console, as this makes it very difficult to remember and reproduce the output you want to reference. Potentially the most important feature of R Markdown files is that they allow for us to nest our `R` code within a written report. In an R Markdown file, `R` code appears in a gray box, which we call "code chunks." The R Markdown file knows that the gray box contains `R` code because it begins with three tick marks (\`\`\`), followed by two curly braces that contain a lowercase letter r ({r}). You've already seen this above!
