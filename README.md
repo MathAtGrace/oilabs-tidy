@@ -21,10 +21,10 @@ creating new ones, please let us know!
 
 ## Labs
 
-1. [Intro to R](../01_intro_to_r/intro_to_r.html)
-2. [Intro to data](../02_intro_to_data/intro_to_data.html)
-4. [Probability](../03_probability/probability.html)
-3. [Normal distribution](../04_normal_distribution/normal_distribution.html)
+1. [Intro to R](../oilabs-tidy/01_intro_to_r/intro_to_r.html)
+2. [Intro to data](../oilabs-tidy/02_intro_to_data/intro_to_data.html)
+4. [Probability](../oilabs-tidy/03_probability/probability.html)
+3. [Normal distribution](../oilabs-tidy/04_normal_distribution/normal_distribution.html)
 5. Foundations of inference  
   a. [Sampling distributions](https://ryan-johnson-grace.shinyapps.io/sampling_distributions/)  
   b. [Confidence intervals](https://ryan-johnson-grace.shinyapps.io/confidence_intervals/)
