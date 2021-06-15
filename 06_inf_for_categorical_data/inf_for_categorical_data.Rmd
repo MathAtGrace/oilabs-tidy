@@ -1,9 +1,8 @@
 ---
-title: "Inference for categorical data"
-runtime: shiny
+title: 'Inference for categorical data'
 output:
   html_document:
-    css: www/lab.css
+    css: ../lab.css
     highlight: pygments
     theme: cerulean
     toc: true
@@ -19,7 +18,13 @@ knitr::opts_chunk$set(eval = TRUE, results = FALSE, fig.show = "hide", message =
 ### Load packages
 
 In this lab, we will explore and visualize the data using the **tidyverse** suite of packages, and perform statistical inference using **infer**.
-The data can be found in the companion package for OpenIntro resources, **openintro**.
+The data can be found in the companion package for OpenIntro resources, **openintro**.  We'll also use a new package called **janitor** that is really useful for creating two-way tables.
+
+Remember to only do this code once in your console:
+```{r eval = FALSE}
+install.packages(c("janitor", "gt"))
+```
+
 
 Let's load the packages.
 
@@ -27,6 +32,9 @@ Let's load the packages.
 library(tidyverse)
 library(openintro)
 library(infer)
+library(janitor)
+library(gt)
+set.seed(12345)
 ```
 
 ### Creating a reproducible lab report
@@ -36,48 +44,157 @@ To create your new lab report, in RStudio, go to New File -\> R Markdown... Then
 ### The data
 
 You will be analyzing the same dataset as in the previous lab, where you delved into a sample from the Youth Risk Behavior Surveillance System (YRBSS) survey, which uses data from high schoolers to help discover health patterns.
-The dataset is called `yrbss`.
+The dataset is called `yrbss` which comes with the `openintro` package.  You can check it out with
 
-1.  What are the counts within each category for the amount of days these students have texted while driving within the past 30 days?
-
-2.  What is the proportion of people who have texted while driving every day in the past 30 days and never wear helmets?
-
-Remember that you can use `filter` to limit the dataset to just non-helmet wearers.
-Here, we will name the dataset `no_helmet`.
-
-```{r no helmet}
-no_helmet <- yrbss %>%
-  filter(helmet_12m == "never")
+```{r eval = FALSE}
+data(yrbss)
+View(yrbss)
 ```
 
-Also, it may be easier to calculate the proportion if you create a new variable that specifies whether the individual has texted every day while driving over the past 30 days or not.
-We will call this variable `text_ind`.
-
-```{r indicator-texting}
-no_helmet <- no_helmet %>%
-  mutate(text_ind = ifelse(text_while_driving_30d == "30", "yes", "no"))
+and you can see more of what the variable names mean by
+```{r eval = FALSE}
+?yrbss
 ```
 
-## Inference on proportions
+### Exploring the data with tables
 
-When summarizing the YRBSS, the Centers for Disease Control and Prevention seeks insight into the population *parameters*.
-To do this, you can answer the question, "What proportion of people in your sample reported that they have texted while driving each day for the past 30 days?" with a statistic; while the question "What proportion of people on earth have texted while driving each day for the past 30 days?" is answered with an estimate of the parameter.
+First we'll use the `janitor` package to create tables from our categorical data, then we'll use the `gt` package to make our tables pretty.  
 
-The inferential tools for estimating population proportion are analogous to those used for means in the last chapter: the confidence interval and the hypothesis test.
+1.  Run the code below in your lab report.  Make a mathematical observation about the data.  A "mathematical oberservation" means you should refer to at least one of the numbers.  Remember: your answers to lab reports should always be in complete sentences.
 
-```{r nohelmet-text-ci}
-no_helmet %>%
-  specify(response = text_ind, success = "yes") %>%
-  generate(reps = 1000, type = "bootstrap") %>%
-  calculate(stat = "prop") %>%
+```{r }
+yrbss %>%
+  tabyl(text_while_driving_30d) %>%
+  adorn_pct_formatting() %>%
+  gt()
+```
+
+
+2.  You might be annoyed about the order of the groups in the table you made.  This is because R orders categories alphabetically, and `30` comes before `6` alphabetically because $3 < 6$.  We can fix this by manually changing the order of the categories.  Run the code below in your lab report and then rerun the code from exercise 1.
+
+```{r}
+yrbss <- yrbss %>%
+  mutate(text_while_driving_30d = factor(text_while_driving_30d,
+                                         levels = c("did not drive",
+                                                    "0", "1-2", "3-5",
+                                                    "6-9", "10-19",
+                                                    "20-29", "30")),
+         helmet_12m = factor(helmet_12m,
+                             levels = c("did not ride", "never",
+                                        "rarely", "sometimes",
+                                        "most of time", "always")))
+```
+
+The `janitor` package let's us go a step further than using `count()` like in previous labs, because it can create 2-way tables, and then easily "adorn" them with totals, percentages, etc.
+
+3.  Run the code below in your lab report.  Pick one of the non-total percentages and use it in a complete sentence that gives the context of that number.
+
+```{r}
+yrbss %>%
+  tabyl(text_while_driving_30d, helmet_12m) %>%
+  adorn_totals("row") %>%
+  adorn_totals("col") %>%
+  adorn_percentages("all") %>%
+  adorn_pct_formatting() %>%
+  gt()
+```
+
+## Inference for Two Proportions
+
+Do you think that people who always wear their helmet are more likely to not text and drive?
+
+Our first problem with answering this question is that both of these questions have more than two options, so we need to recode each of them into only two categories.  We'll break this into steps.  Run this in your console and then look at the both variables to see that they are now only made up of two categories.
+
+```{r}
+yrbss %>%
+  mutate(text_while_driving_30d = ifelse(text_while_driving_30d == "0",
+                                         "0", "not 0"),
+         helmet_12m = ifelse(helmet_12m == "always",
+                             "always", "not always")) %>%
+  specify(response = text_while_driving_30d,
+          explanatory = helmet_12m,
+          success = "0") %>%
+  View()
+```
+
+Notice that we took the `yrbss` data and distilled it to two variables with two outcomes each as a new data set called `helmet_vs_no_texting`.  Think about how this was done, because you'll have to do it for two other variables later on.
+
+You also should have received a warning that 1199 rows containing missing values were removed.  If we were doing a real scientific project we would need to note this in our write-up.
+
+Now that we have two variables with two possibilities each, we have a scenario that matches section 6.2 of our book on the difference of two proportions.  We'll use the `infer` package to find our point estimate and create a null distribution to compare it to, and we'll give these the obvious names `point_estimate` and `null_dist` respectively.
+
+To find the point estimate we only need to add one line to the end of the code above.
+
+```{r}
+point_estimate <- yrbss %>%
+  mutate(text_while_driving_30d = ifelse(text_while_driving_30d == "0",
+                                         "0", "not 0"),
+         helmet_12m = ifelse(helmet_12m == "always",
+                             "always", "not always")) %>%
+  specify(response = text_while_driving_30d,
+          explanatory = helmet_12m,
+          success = "0") %>%
+  calculate(stat = "diff in props", order = c("always", "not always"))
+```
+Now we can create the null distribution with 5000 simulations.  It might take your computer a couple seconds to complete all of the simulations.
+
+```{r}
+null_dist <- yrbss %>%
+  mutate(text_while_driving_30d = ifelse(text_while_driving_30d == "0",
+                                         "0", "not 0"),
+         helmet_12m = ifelse(helmet_12m == "always",
+                             "always", "not always")) %>%
+  specify(response = text_while_driving_30d,
+          explanatory = helmet_12m,
+          success = "0") %>%
+  hypothesize(null = "independence") %>% 
+  generate(reps = 5000) %>%
+  calculate(stat = "diff in props", order = c("always", "not always"))
+```
+
+
+```{r}
+visualize(null_dist) +
+  shade_p_value(obs_stat = point_estimate, direction = "two-sided")
+```
+
+And we can compute the p-value using our 5000 simulations.
+
+```{r}
+null_dist %>%
+  get_p_value(obs_stat = point_estimate, direction = "both")
+```
+
+
+1.  Summarize what we just did by first writing the null and alternative hypothesis in words, then pasting the p-value and its plot with all other required code, and finally, by writing a decision and conclusion based on the p-value you computed.
+
+If we wanted the confidence interval instead of doing a hypothesis test, we would do
+
+```{r}
+yrbss %>%
+  mutate(text_while_driving_30d = ifelse(text_while_driving_30d == "0",
+                                         "0", "not 0"),
+         helmet_12m = ifelse(helmet_12m == "always",
+                             "always", "not always")) %>%
+  specify(response = text_while_driving_30d,
+          explanatory = helmet_12m,
+          success = "0") %>%
+  generate(reps = 5000) %>%
+  calculate(stat = "diff in props", order = c("always", "not always")) %>%
   get_ci(level = 0.95)
 ```
+2.  Use complete sentences to interpret this confidence interval in context of the survey.  Include the code above.
 
-Note that since the goal is to construct an interval estimate for a proportion, it's necessary to both include the `success` argument within `specify`, which accounts for the proportion of non-helmet wearers than have consistently texted while driving the past 30 days, in this example, and that `stat` within `calculate` is here "prop", signaling that you are trying to do some sort of inference on a proportion.
+### On our own: Difference of Two Proportions
 
-1.  What is the margin of error for the estimate of the proportion of non-helmet wearers that have texted while driving each day for the past 30 days based on this survey?
+Are males or females more likely to say they do not watch TV?
 
-2.  Using the `infer` package, calculate confidence intervals for two other categorical variables (you'll need to decide which level to call "success", and report the associated margins of error. Interpet the interval in context of the data. It may be helpful to create new data sets for each of the two countries first, and then use these data sets to construct the confidence intervals.
+1.  Follow similar steps above to find the confidence interval for the hours of TV watched by females minus the hours of TV watched by males on school nights.  Show your code and interpret your results in context of the data.
+
+2.  Follow similar steps above to follow a hypothesis test to check whether gender and not watching TV are dependent or independent.  Make sure to state your null and alternative hypothesis in English, include your code, and interpret your decision and conclusion.
+
+
+-----------------------------------------
 
 ## How does the proportion affect the margin of error?
 
@@ -93,22 +210,15 @@ ME = 1.96\times SE = 1.96\times\sqrt{p(1-p)/n} \,.
 $$ Since the population proportion $p$ is in this $ME$ formula, it should make sense that the margin of error is in some way dependent on the population proportion.
 We can visualize this relationship by creating a plot of $ME$ vs. $p$.
 
-Since sample size is irrelevant to this discussion, let's just set it to some value ($n = 1000$) and use this value in the following calculations:
+Instead of only considering these two variables, let's simulate all possible true proportions rounded to the nearest 100th and plot their 95% M.E.
 
 ```{r n-for-me-plot}
-n <- 1000
+n <- 1000 #pick an arbitrary sample size
+p <- seq(from = 0, to = 1, by = 0.01) #sequence: 0, 0.01, 0.02, ... 0.99, 1
+me <- 2 * sqrt(p * (1 - p)/n) #calculate the margin of error for each p
 ```
 
-The first step is to make a variable `p` that is a sequence from 0 to 1 with each number incremented by 0.01.
-You can then create a variable of the margin of error (`me`) associated with each of these values of `p` using the familiar approximate formula ($ME = 2 \times SE$).
-
-```{r p-me}
-p <- seq(from = 0, to = 1, by = 0.01)
-me <- 2 * sqrt(p * (1 - p)/n)
-```
-
-Lastly, you can plot the two variables against each other to reveal their relationship.
-To do so, we need to first put these variables in a data frame that you can call in the `ggplot` function.
+We just calculated a bunch of margins or error for different scenarios.  The best way to get a sense for what they are is to plot them with the `ggplot` function.
 
 ```{r me-plot}
 dd <- data.frame(p = p, me = me)
@@ -117,80 +227,9 @@ ggplot(data = dd, aes(x = p, y = me)) +
   labs(x = "Population Proportion", y = "Margin of Error")
 ```
 
-1.  Describe the relationship between `p` and `me`. Include the margin of error vs. population proportion plot you constructed in your answer. For a given sample size, for which value of `p` is margin of error maximized?
+1.  Describe the relationship between `p` and `me`. Include the margin of error vs. population proportion plot you constructed in your answer. For which value of `p` is margin of error maximized?
 
-## Success-failure condition
 
-We have emphasized that you must always check conditions before making inference.
-For inference on proportions, the sample proportion can be assumed to be nearly normal if it is based upon a random sample of independent observations and if both $np \geq 10$ and $n(1 - p) \geq 10$.
-This rule of thumb is easy enough to follow, but it makes you wonder: what's so special about the number 10?
-
-The short answer is: nothing.
-You could argue that you would be fine with 9 or that you really should be using 11.
-What is the "best" value for such a rule of thumb is, at least to some degree, arbitrary.
-However, when $np$ and $n(1-p)$ reaches 10 the sampling distribution is sufficiently normal to use confidence intervals and hypothesis tests that are based on that approximation.
-
-You can investigate the interplay between $n$ and $p$ and the shape of the sampling distribution by using simulations.
-Play around with the following app to investigate how the shape, center, and spread of the distribution of $\hat{p}$ changes as $n$ and $p$ changes.
-
-```{r sf-app, echo=FALSE, eval=TRUE}
-inputPanel(
-  numericInput("n", label = "Sample size:", value = 300),
-  
-  sliderInput("p", label = "Population proportion:",
-              min = 0, max = 1, value = 0.1, step = 0.01),
-  
-  numericInput("x_min", label = "Min for x-axis:", value = 0, min = 0, max = 1),
-  numericInput("x_max", label = "Max for x-axis:", value = 1, min = 0, max = 1)
-)
-
-renderPlot({
-  pp <- data.frame(p_hat = rep(0, 5000))
-  for(i in 1:5000){
-    samp <- sample(c(TRUE, FALSE), input$n, replace = TRUE, 
-                   prob = c(input$p, 1 - input$p))
-    pp$p_hat[i] <- sum(samp == TRUE) / input$n
-  }
-  bw <- diff(range(pp$p_hat)) / 30
-  ggplot(data = pp, aes(x = p_hat)) +
-    geom_histogram(binwidth = bw) +
-    xlim(input$x_min, input$x_max) +
-    ggtitle(paste0("Distribution of p_hats, drawn from p = ", input$p, ", n = ", input$n))
-})
-```
-
-1.  Describe the sampling distribution of sample proportions at $n = 300$ and $p = 0.1$.
-    Be sure to note the center, spread, and shape.
-
-2.  Keep $n$ constant and change $p$.
-    How does the shape, center, and spread of the sampling distribution vary as $p$ changes.
-    You might want to adjust min and max for the $x$-axis for a better view of the distribution.
-
-3.  Now also change $n$.
-    How does $n$ appear to affect the distribution of $\hat{p}$?
-
-------------------------------------------------------------------------
-
-## More Practice
-
-For some of the exercises below, you will conduct inference comparing two proportions.
-In such cases, you have a response variable that is categorical, and an explanatory variable that is also categorical, and you are comparing the proportions of success of the response variable across the levels of the explanatory variable.
-This means that when using `infer`, you need to include both variables within `specify`.
-
-1.  Is there convincing evidence that those who sleep 10+ hours per day are more likely to strength train every day of the week?
-    As always, write out the hypotheses for any tests you conduct and outline the status of the conditions for inference.
-    If you find a significant difference, also quantify this difference with a confidence interval.
-
-2.  Let's say there has been no difference in likeliness to strength train every day of the week for those who sleep 10+ hours.
-    What is the probablity that you could detect a change (at a significance level of 0.05) simply by chance?
-    *Hint:* Review the definition of the Type 1 error.
-
-3.  Suppose you're hired by the local government to estimate the proportion of residents that attend a religious service on a weekly basis.
-    According to the guidelines, the estimate must have a margin of error no greater than 1% with 95% confidence.
-    You have no idea what to expect for $p$.
-    How many people would you have to sample to ensure that you are within the guidelines?\
-    *Hint:* Refer to your plot of the relationship between $p$ and margin of error.
-    This question does not require using a dataset.
 
 ------------------------------------------------------------------------
 
