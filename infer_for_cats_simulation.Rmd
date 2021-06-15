@@ -22,7 +22,7 @@ The data can be found in the companion package for OpenIntro resources, **openin
 
 Remember to only do this code once in your console:
 ```{r eval = FALSE}
-install.packages(c("janitor", "gt", "vcd"))
+install.packages(c("janitor", "gt"))
 ```
 
 
@@ -34,7 +34,7 @@ library(openintro)
 library(infer)
 library(janitor)
 library(gt)
-library(vcd)
+set.seed(12345)
 ```
 
 ### Creating a reproducible lab report
@@ -105,90 +105,94 @@ Do you think that people who always wear their helmet are more likely to not tex
 
 Our first problem with answering this question is that both of these questions have more than two options, so we need to recode each of them into only two categories.  We'll break this into steps.  Run this in your console and then look at the both variables to see that they are now only made up of two categories.
 
-```{r view-two-proportions-view, eval=FALSE}
+```{r}
 yrbss %>%
-  select(text_while_driving_30d, helmet_12m) %>%
   mutate(text_while_driving_30d = ifelse(text_while_driving_30d == "0",
                                          "0", "not 0"),
          helmet_12m = ifelse(helmet_12m == "always",
                              "always", "not always")) %>%
+  specify(response = text_while_driving_30d,
+          explanatory = helmet_12m,
+          success = "0") %>%
   View()
 ```
 
 Notice that we took the `yrbss` data and distilled it to two variables with two outcomes each as a new data set called `helmet_vs_no_texting`.  Think about how this was done, because you'll have to do it for two other variables later on.
 
-Now that we have two variables with two possibilities each, we have a scenario that matches section 6.2 of our book on the difference of two proportions.
+You also should have received a warning that 1199 rows containing missing values were removed.  If we were doing a real scientific project we would need to note this in our write-up.
+
+Now that we have two variables with two possibilities each, we have a scenario that matches section 6.2 of our book on the difference of two proportions.  We'll use the `infer` package to find our point estimate and create a null distribution to compare it to, and we'll give these the obvious names `point_estimate` and `null_dist` respectively.
 
 To find the point estimate we only need to add one line to the end of the code above.
 
-```{r two-proportions, warning=FALSE}
+```{r}
+point_estimate <- yrbss %>%
+  mutate(text_while_driving_30d = ifelse(text_while_driving_30d == "0",
+                                         "0", "not 0"),
+         helmet_12m = ifelse(helmet_12m == "always",
+                             "always", "not always")) %>%
+  specify(response = text_while_driving_30d,
+          explanatory = helmet_12m,
+          success = "0") %>%
+  calculate(stat = "diff in props", order = c("always", "not always"))
+```
+Now we can create the null distribution with 5000 simulations.  It might take your computer a couple seconds to complete all of the simulations.
+
+```{r}
+null_dist <- yrbss %>%
+  mutate(text_while_driving_30d = ifelse(text_while_driving_30d == "0",
+                                         "0", "not 0"),
+         helmet_12m = ifelse(helmet_12m == "always",
+                             "always", "not always")) %>%
+  specify(response = text_while_driving_30d,
+          explanatory = helmet_12m,
+          success = "0") %>%
+  hypothesize(null = "independence") %>% 
+  generate(reps = 5000) %>%
+  calculate(stat = "diff in props", order = c("always", "not always"))
+```
+
+
+```{r}
+visualize(null_dist) +
+  shade_p_value(obs_stat = point_estimate, direction = "two-sided")
+```
+
+And we can compute the p-value using our 5000 simulations.
+
+```{r}
+null_dist %>%
+  get_p_value(obs_stat = point_estimate, direction = "both")
+```
+
+
+1.  Summarize what we just did by first writing the null and alternative hypothesis in words, then pasting the p-value and its plot with all other required code, and finally, by writing a decision and conclusion based on the p-value you computed.
+
+If we wanted the confidence interval instead of doing a hypothesis test, we would do
+
+```{r}
 yrbss %>%
   mutate(text_while_driving_30d = ifelse(text_while_driving_30d == "0",
                                          "0", "not 0"),
          helmet_12m = ifelse(helmet_12m == "always",
                              "always", "not always")) %>%
-  prop_test(response = text_while_driving_30d,
-            explanatory = helmet_12m,
-            order = c("always", "not always"),
-            z = TRUE)
+  specify(response = text_while_driving_30d,
+          explanatory = helmet_12m,
+          success = "0") %>%
+  generate(reps = 5000) %>%
+  calculate(stat = "diff in props", order = c("always", "not always")) %>%
+  get_ci(level = 0.95)
 ```
+2.  Use complete sentences to interpret this confidence interval in context of the survey.  Include the code above.
 
-1.  You should have received a warning that 1199 rows containing missing values were removed.  Thinking back to chapter 1, what is the name of the bias that we need to careful of committing? What percentage of our sample does this represent?
-
-1.  Summarize what we just did by first writing the null and alternative hypothesis in words, then pasting the code chunk above, and finally, by writing a decision and conclusion based on the p-value you computed.
-
-2.  Use complete sentences to interpret this confidence interval in context of the survey.
-
-### On Your own: Difference of Two Proportions
+### On our own: Difference of Two Proportions
 
 Are males or females more likely to say they do not watch TV?
 
-2.  Follow similar steps above to completet a hypothesis test to check whether gender and not watching TV are dependent or independent.  Make sure to state your null and alternative hypothesis in English, include your code, and interpret your decision and conclusion.
-
-*Hint:* you should be able to copy/paste the code chunk above that computed a p-value and swap in new variable names and recode new categories to complete the problem above.  You don't need to recode `gender` because there are already only two categories.
-
 1.  Follow similar steps above to find the confidence interval for the hours of TV watched by females minus the hours of TV watched by males on school nights.  Show your code and interpret your results in context of the data.
 
+2.  Follow similar steps above to follow a hypothesis test to check whether gender and not watching TV are dependent or independent.  Make sure to state your null and alternative hypothesis in English, include your code, and interpret your decision and conclusion.
 
-## Chi-Squared Test for Independence
-
-When our categorical variables have more than one category we can use a Chi-squared test of fit for one variable (section 6.3 of the textbook) and a Chi-squared test of independence for two variables (section 6.4 of the textbook).
-
-For example, here is a Chi-squared test for independence between how many hours students slept on school nights vs the number of hours they watched TV on school nights.
-
-
-```{r chi-squared, warning=FALSE}
-yrbss %>%
-  chisq_test(response = school_night_hours_sleep,
-             explanatory = hours_tv_per_school_day)
-```
-
-And we can visualize the distribution with a mosaic plot.  Most of the code below is simply reorganizing the categories so that their order makes sense.  The rectangles are shaded red if they are smaller than expected, and blue if they are larger than expected.
-
-```{r}
-yrbss %>%
-  mutate(hours_tv_per_school_day =
-           ifelse(hours_tv_per_school_day == "do not watch",
-                  "0", hours_tv_per_school_day),
-         hours_tv_per_school_day =
-           factor(hours_tv_per_school_day,
-                  levels = c("0", "<1", "1",
-                             "2", "3", "4",
-                             "5+")),
-         school_night_hours_sleep =
-           factor(school_night_hours_sleep,
-                  levels = c("<5", "5", "6",
-                             "7", "8", "9",
-                             "10+"))) %>%
-  mosaic(data = .,
-         ~ hours_tv_per_school_day + school_night_hours_sleep,
-         direction = c("v", "h"),
-         shade = TRUE)
-```
-
-1.  Write out the null and alternative hypothesis for this Chi-squared test in English, then copy the code for the test and the mosaic plot, then write a decision and conclusion.
-
-2.  Hopefully your conclusion is not too strong for the quesiton above.  In order to say something stronger, we would have had to divide both variables into only two categories.  For future research, suggest a way of dividing each variable into only two categories based on the mosaic plot above.
 
 -----------------------------------------
 

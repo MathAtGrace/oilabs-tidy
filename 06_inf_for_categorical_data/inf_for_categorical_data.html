@@ -334,14 +334,14 @@ div.tocify {
 <h3>Load packages</h3>
 <p>In this lab, we will explore and visualize the data using the <strong>tidyverse</strong> suite of packages, and perform statistical inference using <strong>infer</strong>. The data can be found in the companion package for OpenIntro resources, <strong>openintro</strong>. We’ll also use a new package called <strong>janitor</strong> that is really useful for creating two-way tables.</p>
 <p>Remember to only do this code once in your console:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">&quot;janitor&quot;</span>, <span class="st">&quot;gt&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">&quot;janitor&quot;</span>, <span class="st">&quot;gt&quot;</span>, <span class="st">&quot;vcd&quot;</span>))</span></code></pre></div>
 <p>Let’s load the packages.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(openintro)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(infer)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span></code></pre></div>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vcd)</span></code></pre></div>
 </div>
 <div id="creating-a-reproducible-lab-report" class="section level3">
 <h3>Creating a reproducible lab report</h3>
@@ -396,75 +396,72 @@ div.tocify {
 <p>Do you think that people who always wear their helmet are more likely to not text and drive?</p>
 <p>Our first problem with answering this question is that both of these questions have more than two options, so we need to recode each of them into only two categories. We’ll break this into steps. Run this in your console and then look at the both variables to see that they are now only made up of two categories.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>yrbss <span class="sc">%&gt;%</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text_while_driving_30d =</span> <span class="fu">ifelse</span>(text_while_driving_30d <span class="sc">==</span> <span class="st">&quot;0&quot;</span>,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">&quot;0&quot;</span>, <span class="st">&quot;not 0&quot;</span>),</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">helmet_12m =</span> <span class="fu">ifelse</span>(helmet_12m <span class="sc">==</span> <span class="st">&quot;always&quot;</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;always&quot;</span>, <span class="st">&quot;not always&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">specify</span>(<span class="at">response =</span> text_while_driving_30d,</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">explanatory =</span> helmet_12m,</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">success =</span> <span class="st">&quot;0&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">View</span>()</span></code></pre></div>
-<pre><code>## Warning: Removed 1199 rows containing missing values.</code></pre>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(text_while_driving_30d, helmet_12m) <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text_while_driving_30d =</span> <span class="fu">ifelse</span>(text_while_driving_30d <span class="sc">==</span> <span class="st">&quot;0&quot;</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">&quot;0&quot;</span>, <span class="st">&quot;not 0&quot;</span>),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">helmet_12m =</span> <span class="fu">ifelse</span>(helmet_12m <span class="sc">==</span> <span class="st">&quot;always&quot;</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;always&quot;</span>, <span class="st">&quot;not always&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">View</span>()</span></code></pre></div>
 <p>Notice that we took the <code>yrbss</code> data and distilled it to two variables with two outcomes each as a new data set called <code>helmet_vs_no_texting</code>. Think about how this was done, because you’ll have to do it for two other variables later on.</p>
-<p>You also should have received a warning that 1199 rows containing missing values were removed. If we were doing a real scientific project we would need to note this in our write-up.</p>
-<p>Now that we have two variables with two possibilities each, we have a scenario that matches section 6.2 of our book on the difference of two proportions. We’ll use the <code>infer</code> package to find our point estimate and create a null distribution to compare it to, and we’ll give these the obvious names <code>point_estimate</code> and <code>null_dist</code> respectively.</p>
+<p>Now that we have two variables with two possibilities each, we have a scenario that matches section 6.2 of our book on the difference of two proportions.</p>
 <p>To find the point estimate we only need to add one line to the end of the code above.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>point_estimate <span class="ot">&lt;-</span> yrbss <span class="sc">%&gt;%</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text_while_driving_30d =</span> <span class="fu">ifelse</span>(text_while_driving_30d <span class="sc">==</span> <span class="st">&quot;0&quot;</span>,</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">&quot;0&quot;</span>, <span class="st">&quot;not 0&quot;</span>),</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">helmet_12m =</span> <span class="fu">ifelse</span>(helmet_12m <span class="sc">==</span> <span class="st">&quot;always&quot;</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;always&quot;</span>, <span class="st">&quot;not always&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">specify</span>(<span class="at">response =</span> text_while_driving_30d,</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">explanatory =</span> helmet_12m,</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">success =</span> <span class="st">&quot;0&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">calculate</span>(<span class="at">stat =</span> <span class="st">&quot;diff in props&quot;</span>, <span class="at">order =</span> <span class="fu">c</span>(<span class="st">&quot;always&quot;</span>, <span class="st">&quot;not always&quot;</span>))</span></code></pre></div>
-<pre><code>## Warning: Removed 1199 rows containing missing values.</code></pre>
-<p>Now we can create the null distribution with 5000 simulations. It might take your computer a couple seconds to complete all of the simulations.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>null_dist <span class="ot">&lt;-</span> yrbss <span class="sc">%&gt;%</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text_while_driving_30d =</span> <span class="fu">ifelse</span>(text_while_driving_30d <span class="sc">==</span> <span class="st">&quot;0&quot;</span>,</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">&quot;0&quot;</span>, <span class="st">&quot;not 0&quot;</span>),</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">helmet_12m =</span> <span class="fu">ifelse</span>(helmet_12m <span class="sc">==</span> <span class="st">&quot;always&quot;</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;always&quot;</span>, <span class="st">&quot;not always&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">specify</span>(<span class="at">response =</span> text_while_driving_30d,</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">explanatory =</span> helmet_12m,</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">success =</span> <span class="st">&quot;0&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">hypothesize</span>(<span class="at">null =</span> <span class="st">&quot;independence&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate</span>(<span class="at">reps =</span> <span class="dv">5000</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">calculate</span>(<span class="at">stat =</span> <span class="st">&quot;diff in props&quot;</span>, <span class="at">order =</span> <span class="fu">c</span>(<span class="st">&quot;always&quot;</span>, <span class="st">&quot;not always&quot;</span>))</span></code></pre></div>
-<pre><code>## Warning: Removed 1199 rows containing missing values.</code></pre>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">visualize</span>(null_dist) <span class="sc">+</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">shade_p_value</span>(<span class="at">obs_stat =</span> point_estimate, <span class="at">direction =</span> <span class="st">&quot;two-sided&quot;</span>)</span></code></pre></div>
-<p>And we can compute the p-value using our 5000 simulations.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>null_dist <span class="sc">%&gt;%</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_p_value</span>(<span class="at">obs_stat =</span> point_estimate, <span class="at">direction =</span> <span class="st">&quot;both&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>yrbss <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text_while_driving_30d =</span> <span class="fu">ifelse</span>(text_while_driving_30d <span class="sc">==</span> <span class="st">&quot;0&quot;</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">&quot;0&quot;</span>, <span class="st">&quot;not 0&quot;</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">helmet_12m =</span> <span class="fu">ifelse</span>(helmet_12m <span class="sc">==</span> <span class="st">&quot;always&quot;</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;always&quot;</span>, <span class="st">&quot;not always&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prop_test</span>(<span class="at">response =</span> text_while_driving_30d,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">explanatory =</span> helmet_12m,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">order =</span> <span class="fu">c</span>(<span class="st">&quot;always&quot;</span>, <span class="st">&quot;not always&quot;</span>),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">z =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <ol style="list-style-type: decimal">
-<li>Summarize what we just did by first writing the null and alternative hypothesis in words, then pasting the p-value and its plot with all other required code, and finally, by writing a decision and conclusion based on the p-value you computed.</li>
+<li><p>You should have received a warning that 1199 rows containing missing values were removed. Thinking back to chapter 1, what is the name of the bias that we need to careful of committing? What percentage of our sample does this represent?</p></li>
+<li><p>Summarize what we just did by first writing the null and alternative hypothesis in words, then pasting the code chunk above, and finally, by writing a decision and conclusion based on the p-value you computed.</p></li>
+<li><p>Use complete sentences to interpret this confidence interval in context of the survey.</p></li>
 </ol>
-<p>If we wanted the confidence interval instead of doing a hypothesis test, we would do</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>yrbss <span class="sc">%&gt;%</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text_while_driving_30d =</span> <span class="fu">ifelse</span>(text_while_driving_30d <span class="sc">==</span> <span class="st">&quot;0&quot;</span>,</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">&quot;0&quot;</span>, <span class="st">&quot;not 0&quot;</span>),</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">helmet_12m =</span> <span class="fu">ifelse</span>(helmet_12m <span class="sc">==</span> <span class="st">&quot;always&quot;</span>,</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;always&quot;</span>, <span class="st">&quot;not always&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">specify</span>(<span class="at">response =</span> text_while_driving_30d,</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">explanatory =</span> helmet_12m,</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">success =</span> <span class="st">&quot;0&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">generate</span>(<span class="at">reps =</span> <span class="dv">5000</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">calculate</span>(<span class="at">stat =</span> <span class="st">&quot;diff in props&quot;</span>, <span class="at">order =</span> <span class="fu">c</span>(<span class="st">&quot;always&quot;</span>, <span class="st">&quot;not always&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_ci</span>(<span class="at">level =</span> <span class="fl">0.95</span>)</span></code></pre></div>
-<pre><code>## Warning: Removed 1199 rows containing missing values.</code></pre>
-<ol start="2" style="list-style-type: decimal">
-<li>Use complete sentences to interpret this confidence interval in context of the survey. Include the code above.</li>
-</ol>
-<div id="on-our-own-difference-of-two-proportions" class="section level3">
-<h3>On our own: Difference of Two Proportions</h3>
+<div id="on-your-own-difference-of-two-proportions" class="section level3">
+<h3>On Your own: Difference of Two Proportions</h3>
 <p>Are males or females more likely to say they do not watch TV?</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Follow similar steps above to completet a hypothesis test to check whether gender and not watching TV are dependent or independent. Make sure to state your null and alternative hypothesis in English, include your code, and interpret your decision and conclusion.</li>
+</ol>
+<p><em>Hint:</em> you should be able to copy/paste the code chunk above that computed a p-value and swap in new variable names and recode new categories to complete the problem above. You don’t need to recode <code>gender</code> because there are already only two categories.</p>
 <ol style="list-style-type: decimal">
-<li><p>Follow similar steps above to find the confidence interval for the hours of TV watched by females minus the hours of TV watched by males on school nights. Show your code and interpret your results in context of the data.</p></li>
-<li><p>Follow similar steps above to follow a hypothesis test to check whether gender and not watching TV are dependent or independent. Make sure to state your null and alternative hypothesis in English, include your code, and interpret your decision and conclusion.</p></li>
+<li>Follow similar steps above to find the confidence interval for the hours of TV watched by females minus the hours of TV watched by males on school nights. Show your code and interpret your results in context of the data.</li>
+</ol>
+</div>
+</div>
+<div id="chi-squared-test-for-independence" class="section level2">
+<h2>Chi-Squared Test for Independence</h2>
+<p>When our categorical variables have more than one category we can use a Chi-squared test of fit for one variable (section 6.3 of the textbook) and a Chi-squared test of independence for two variables (section 6.4 of the textbook).</p>
+<p>For example, here is a Chi-squared test for independence between how many hours students slept on school nights vs the number of hours they watched TV on school nights.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>yrbss <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">chisq_test</span>(<span class="at">response =</span> school_night_hours_sleep,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">explanatory =</span> hours_tv_per_school_day)</span></code></pre></div>
+<p>And we can visualize the distribution with a mosaic plot. Most of the code below is simply reorganizing the categories so that their order makes sense. The rectangles are shaded red if they are smaller than expected, and blue if they are larger than expected.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>yrbss <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hours_tv_per_school_day =</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>           <span class="fu">ifelse</span>(hours_tv_per_school_day <span class="sc">==</span> <span class="st">&quot;do not watch&quot;</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                  <span class="st">&quot;0&quot;</span>, hours_tv_per_school_day),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">hours_tv_per_school_day =</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>           <span class="fu">factor</span>(hours_tv_per_school_day,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;0&quot;</span>, <span class="st">&quot;&lt;1&quot;</span>, <span class="st">&quot;1&quot;</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>, <span class="st">&quot;4&quot;</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;5+&quot;</span>)),</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">school_night_hours_sleep =</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>           <span class="fu">factor</span>(school_night_hours_sleep,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;&lt;5&quot;</span>, <span class="st">&quot;5&quot;</span>, <span class="st">&quot;6&quot;</span>,</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;7&quot;</span>, <span class="st">&quot;8&quot;</span>, <span class="st">&quot;9&quot;</span>,</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;10+&quot;</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mosaic</span>(<span class="at">data =</span> .,</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>         <span class="sc">~</span> hours_tv_per_school_day <span class="sc">+</span> school_night_hours_sleep,</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">direction =</span> <span class="fu">c</span>(<span class="st">&quot;v&quot;</span>, <span class="st">&quot;h&quot;</span>),</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>         <span class="at">shade =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<ol style="list-style-type: decimal">
+<li><p>Write out the null and alternative hypothesis for this Chi-squared test in English, then copy the code for the test and the mosaic plot, then write a decision and conclusion.</p></li>
+<li><p>Hopefully your conclusion is not too strong for the quesiton above. In order to say something stronger, we would have had to divide both variables into only two categories. For future research, suggest a way of dividing each variable into only two categories based on the mosaic plot above.</p></li>
 </ol>
 <hr />
-</div>
 </div>
 <div id="how-does-the-proportion-affect-the-margin-of-error" class="section level2">
 <h2>How does the proportion affect the margin of error?</h2>
@@ -473,14 +470,14 @@ div.tocify {
 ME = 1.96\times SE = 1.96\times\sqrt{p(1-p)/n} \,.
 \]</span> Since the population proportion <span class="math inline">\(p\)</span> is in this <span class="math inline">\(ME\)</span> formula, it should make sense that the margin of error is in some way dependent on the population proportion. We can visualize this relationship by creating a plot of <span class="math inline">\(ME\)</span> vs. <span class="math inline">\(p\)</span>.</p>
 <p>Instead of only considering these two variables, let’s simulate all possible true proportions rounded to the nearest 100th and plot their 95% M.E.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">1000</span> <span class="co">#pick an arbitrary sample size</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">0</span>, <span class="at">to =</span> <span class="dv">1</span>, <span class="at">by =</span> <span class="fl">0.01</span>) <span class="co">#sequence: 0, 0.01, 0.02, ... 0.99, 1</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>me <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">sqrt</span>(p <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p)<span class="sc">/</span>n) <span class="co">#calculate the margin of error for each p</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">1000</span> <span class="co">#pick an arbitrary sample size</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">0</span>, <span class="at">to =</span> <span class="dv">1</span>, <span class="at">by =</span> <span class="fl">0.01</span>) <span class="co">#sequence: 0, 0.01, 0.02, ... 0.99, 1</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>me <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">sqrt</span>(p <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p)<span class="sc">/</span>n) <span class="co">#calculate the margin of error for each p</span></span></code></pre></div>
 <p>We just calculated a bunch of margins or error for different scenarios. The best way to get a sense for what they are is to plot them with the <code>ggplot</code> function.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>dd <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">p =</span> p, <span class="at">me =</span> me)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dd, <span class="fu">aes</span>(<span class="at">x =</span> p, <span class="at">y =</span> me)) <span class="sc">+</span> </span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Population Proportion&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Margin of Error&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dd <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">p =</span> p, <span class="at">me =</span> me)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dd, <span class="fu">aes</span>(<span class="at">x =</span> p, <span class="at">y =</span> me)) <span class="sc">+</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Population Proportion&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Margin of Error&quot;</span>)</span></code></pre></div>
 <ol style="list-style-type: decimal">
 <li>Describe the relationship between <code>p</code> and <code>me</code>. Include the margin of error vs. population proportion plot you constructed in your answer. For which value of <code>p</code> is margin of error maximized?</li>
 </ol>
