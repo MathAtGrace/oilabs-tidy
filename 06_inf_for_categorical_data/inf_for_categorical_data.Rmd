@@ -154,19 +154,11 @@ Are males or females more likely to say they do not watch TV?
 
 When our categorical variables have more than one category we can use a Chi-squared test of fit for one variable (section 6.3 of the textbook) and a Chi-squared test of independence for two variables (section 6.4 of the textbook).
 
-For example, here is a Chi-squared test for independence between how many hours students slept on school nights vs the number of hours they watched TV on school nights.
-
-
-```{r chi-squared, warning=FALSE}
-yrbss %>%
-  chisq_test(response = school_night_hours_sleep,
-             explanatory = hours_tv_per_school_day)
-```
-
-And we can visualize the distribution with a mosaic plot.  Most of the code below is simply reorganizing the categories so that their order makes sense.  The rectangles are shaded red if they are smaller than expected, and blue if they are larger than expected.
+For example, here is a Chi-squared test for independence between how many hours students slept on school nights vs the number of hours they watched TV on school nights.  First let's give the categories a proper order
 
 ```{r}
-yrbss %>%
+data("yrbss")
+yrbss <- yrbss %>%
   mutate(hours_tv_per_school_day =
            ifelse(hours_tv_per_school_day == "do not watch",
                   "0", hours_tv_per_school_day),
@@ -177,9 +169,34 @@ yrbss %>%
                              "5+")),
          school_night_hours_sleep =
            factor(school_night_hours_sleep,
-                  levels = c("<5", "5", "6",
-                             "7", "8", "9",
-                             "10+"))) %>%
+                  levels = c("10+", "9", "8",
+                             "7", "6", "5",
+                             "<5")))
+```
+
+We can run a chi-squared test on this data by creating a two-way table and then passing it to the funciton `chisq.test()`.
+
+```{r chi-squared, warning=FALSE}
+X2_sleep_vs_tv <- yrbss %>%
+  tabyl(school_night_hours_sleep, hours_tv_per_school_day,
+        show_na = FALSE) %>%
+  chisq.test()
+X2_sleep_vs_tv
+```
+
+When you ran the code chunk above, R did a lot of work that would have taken you a long time to do by hand.  By saving the chi-squared test above, we can run diagnositcs by checking the observed, expected, and residuals $\text{res} = \frac{(O-E)^2}{E}$ for each combination of categories.
+
+```{r eval=FALSE}
+View(X2_sleep_vs_tv$observed)
+View(X2_sleep_vs_tv$expected)
+View(X2_sleep_vs_tv$residuals)
+```
+
+
+And we can visualize the distribution with a mosaic plot.  The rectangles are shaded red if they are smaller than expected, and blue if they are larger than expected.
+
+```{r}
+yrbss %>%
   mosaic(data = .,
          ~ hours_tv_per_school_day + school_night_hours_sleep,
          direction = c("v", "h"),
@@ -188,43 +205,7 @@ yrbss %>%
 
 1.  Write out the null and alternative hypothesis for this Chi-squared test in English, then copy the code for the test and the mosaic plot, then write a decision and conclusion.
 
-2.  Hopefully your conclusion is not too strong for the quesiton above.  In order to say something stronger, we would have had to divide both variables into only two categories.  For future research, suggest a way of dividing each variable into only two categories based on the mosaic plot above.
-
------------------------------------------
-
-## How does the proportion affect the margin of error?
-
-Imagine you've set out to survey 1000 people on two questions: are you at least 6-feet tall?
-and are you left-handed?
-Since both of these sample proportions were calculated from the same sample size, they should have the same margin of error, right?
-Wrong!
-While the margin of error does change with sample size, it is also affected by the proportion.
-
-Think back to the formula for the standard error: $SE = \sqrt{p(1-p)/n}$.
-This is then used in the formula for the margin of error for a 95% confidence interval: $$
-ME = 1.96\times SE = 1.96\times\sqrt{p(1-p)/n} \,.
-$$ Since the population proportion $p$ is in this $ME$ formula, it should make sense that the margin of error is in some way dependent on the population proportion.
-We can visualize this relationship by creating a plot of $ME$ vs. $p$.
-
-Instead of only considering these two variables, let's simulate all possible true proportions rounded to the nearest 100th and plot their 95% M.E.
-
-```{r n-for-me-plot}
-n <- 1000 #pick an arbitrary sample size
-p <- seq(from = 0, to = 1, by = 0.01) #sequence: 0, 0.01, 0.02, ... 0.99, 1
-me <- 2 * sqrt(p * (1 - p)/n) #calculate the margin of error for each p
-```
-
-We just calculated a bunch of margins or error for different scenarios.  The best way to get a sense for what they are is to plot them with the `ggplot` function.
-
-```{r me-plot}
-dd <- data.frame(p = p, me = me)
-ggplot(data = dd, aes(x = p, y = me)) + 
-  geom_line() +
-  labs(x = "Population Proportion", y = "Margin of Error")
-```
-
-1.  Describe the relationship between `p` and `me`. Include the margin of error vs. population proportion plot you constructed in your answer. For which value of `p` is margin of error maximized?
-
+2.  Hopefully your conclusion is not too strong for the question above.  In order to say something stronger, we would have had to divide both variables into only two categories.  For future research, suggest a way of dividing each variable into only two categories based on the mosaic plot above.
 
 
 ------------------------------------------------------------------------
