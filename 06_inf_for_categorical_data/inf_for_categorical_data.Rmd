@@ -154,7 +154,7 @@ Are males or females more likely to say they do not watch TV?
 
 When our categorical variables have more than one category we can use a Chi-squared test of fit for one variable (section 6.3 of the textbook) and a Chi-squared test of independence for two variables (section 6.4 of the textbook).
 
-For example, here is a Chi-squared test for independence between how many hours students slept on school nights vs the number of hours they watched TV on school nights.  First let's give the categories a proper order
+For example, can run a Chi-squared test for independence between how many hours students slept on school nights vs the number of hours they watched TV on school nights.  But first, let's give the categories a proper order.
 
 ```{r}
 data("yrbss")
@@ -174,7 +174,7 @@ yrbss <- yrbss %>%
                              "<5")))
 ```
 
-We can run a chi-squared test on this data by creating a two-way table and then passing it to the funciton `chisq.test()`.
+We can run a chi-squared test on this data by creating a two-way table and then passing it to the function `chisq.test()`.
 
 ```{r chi-squared, warning=FALSE}
 X2_sleep_vs_tv <- yrbss %>%
@@ -184,12 +184,38 @@ X2_sleep_vs_tv <- yrbss %>%
 X2_sleep_vs_tv
 ```
 
-When you ran the code chunk above, R did a lot of work that would have taken you a long time to do by hand.  By saving the chi-squared test above, we can run diagnositcs by checking the observed, expected, and residuals $\text{res} = \frac{(O-E)^2}{E}$ for each combination of categories.
+When you ran the code chunk above, R did a lot of work that would have taken you a long time to do by hand.  By saving the chi-squared test above, we can run diagnostics by checking the observed, expected, and residuals $\text{res} = \frac{(O-E)^2}{E}$ for each combination of categories.
 
-```{r eval=FALSE}
-View(X2_sleep_vs_tv$observed)
-View(X2_sleep_vs_tv$expected)
-View(X2_sleep_vs_tv$residuals)
+We can look at the observed values,
+
+```{r}
+X2_sleep_vs_tv$observed %>%
+  gt() %>%
+  tab_header(title = "Observed") %>%
+  tab_spanner(label = "Hours TV", columns = 2:8) %>%
+  cols_label(school_night_hours_sleep = html("Hours<br>Sleep"))
+```
+
+the expected values,
+
+```{r}
+X2_sleep_vs_tv$expected %>%
+  adorn_rounding() %>%
+  gt() %>%
+  tab_header(title = "Expected") %>%
+  tab_spanner(label = "Hours TV", columns = 2:8) %>%
+  cols_label(school_night_hours_sleep = html("Hours<br>Sleep"))
+```
+
+and the residuals.
+
+```{r}
+X2_sleep_vs_tv$residuals %>%
+  adorn_rounding() %>%
+  gt() %>%
+  tab_header(title = "Residuals") %>%
+  tab_spanner(label = "Hours TV", columns = 2:8) %>%
+  cols_label(school_night_hours_sleep = html("Hours<br>Sleep"))
 ```
 
 

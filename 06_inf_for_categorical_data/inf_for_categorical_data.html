@@ -434,7 +434,7 @@ div.tocify {
 <div id="chi-squared-test-for-independence" class="section level2">
 <h2>Chi-Squared Test for Independence</h2>
 <p>When our categorical variables have more than one category we can use a Chi-squared test of fit for one variable (section 6.3 of the textbook) and a Chi-squared test of independence for two variables (section 6.4 of the textbook).</p>
-<p>For example, here is a Chi-squared test for independence between how many hours students slept on school nights vs the number of hours they watched TV on school nights. First let’s give the categories a proper order</p>
+<p>For example, can run a Chi-squared test for independence between how many hours students slept on school nights vs the number of hours they watched TV on school nights. But first, let’s give the categories a proper order.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;yrbss&quot;</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>yrbss <span class="ot">&lt;-</span> yrbss <span class="sc">%&gt;%</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hours_tv_per_school_day =</span></span>
@@ -450,22 +450,39 @@ div.tocify {
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>                  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;10+&quot;</span>, <span class="st">&quot;9&quot;</span>, <span class="st">&quot;8&quot;</span>,</span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;7&quot;</span>, <span class="st">&quot;6&quot;</span>, <span class="st">&quot;5&quot;</span>,</span>
 <span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;&lt;5&quot;</span>)))</span></code></pre></div>
-<p>We can run a chi-squared test on this data by creating a two-way table and then passing it to the funciton <code>chisq.test()</code>.</p>
+<p>We can run a chi-squared test on this data by creating a two-way table and then passing it to the function <code>chisq.test()</code>.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>X2_sleep_vs_tv <span class="ot">&lt;-</span> yrbss <span class="sc">%&gt;%</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tabyl</span>(school_night_hours_sleep, hours_tv_per_school_day,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">show_na =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">chisq.test</span>()</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>X2_sleep_vs_tv</span></code></pre></div>
-<p>When you ran the code chunk above, R did a lot of work that would have taken you a long time to do by hand. By saving the chi-squared test above, we can run diagnositcs by checking the observed, expected, and residuals <span class="math inline">\(\text{res} = \frac{(O-E)^2}{E}\)</span> for each combination of categories.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(X2_sleep_vs_tv<span class="sc">$</span>observed)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(X2_sleep_vs_tv<span class="sc">$</span>expected)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(X2_sleep_vs_tv<span class="sc">$</span>residuals)</span></code></pre></div>
+<p>When you ran the code chunk above, R did a lot of work that would have taken you a long time to do by hand. By saving the chi-squared test above, we can run diagnostics by checking the observed, expected, and residuals <span class="math inline">\(\text{res} = \frac{(O-E)^2}{E}\)</span> for each combination of categories.</p>
+<p>We can look at the observed values,</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>X2_sleep_vs_tv<span class="sc">$</span>observed <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="at">title =</span> <span class="st">&quot;Observed&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_spanner</span>(<span class="at">label =</span> <span class="st">&quot;Hours TV&quot;</span>, <span class="at">columns =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">8</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(<span class="at">school_night_hours_sleep =</span> <span class="fu">html</span>(<span class="st">&quot;Hours&lt;br&gt;Sleep&quot;</span>))</span></code></pre></div>
+<p>the expected values,</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>X2_sleep_vs_tv<span class="sc">$</span>expected <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">adorn_rounding</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="at">title =</span> <span class="st">&quot;Expected&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_spanner</span>(<span class="at">label =</span> <span class="st">&quot;Hours TV&quot;</span>, <span class="at">columns =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">8</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(<span class="at">school_night_hours_sleep =</span> <span class="fu">html</span>(<span class="st">&quot;Hours&lt;br&gt;Sleep&quot;</span>))</span></code></pre></div>
+<p>and the residuals.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>X2_sleep_vs_tv<span class="sc">$</span>residuals <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">adorn_rounding</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="at">title =</span> <span class="st">&quot;Residuals&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_spanner</span>(<span class="at">label =</span> <span class="st">&quot;Hours TV&quot;</span>, <span class="at">columns =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">8</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(<span class="at">school_night_hours_sleep =</span> <span class="fu">html</span>(<span class="st">&quot;Hours&lt;br&gt;Sleep&quot;</span>))</span></code></pre></div>
 <p>And we can visualize the distribution with a mosaic plot. The rectangles are shaded red if they are smaller than expected, and blue if they are larger than expected.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>yrbss <span class="sc">%&gt;%</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mosaic</span>(<span class="at">data =</span> .,</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>         <span class="sc">~</span> hours_tv_per_school_day <span class="sc">+</span> school_night_hours_sleep,</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">direction =</span> <span class="fu">c</span>(<span class="st">&quot;v&quot;</span>, <span class="st">&quot;h&quot;</span>),</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">shade =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>yrbss <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mosaic</span>(<span class="at">data =</span> .,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>         <span class="sc">~</span> hours_tv_per_school_day <span class="sc">+</span> school_night_hours_sleep,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">direction =</span> <span class="fu">c</span>(<span class="st">&quot;v&quot;</span>, <span class="st">&quot;h&quot;</span>),</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">shade =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <ol style="list-style-type: decimal">
 <li><p>Write out the null and alternative hypothesis for this Chi-squared test in English, then copy the code for the test and the mosaic plot, then write a decision and conclusion.</p></li>
 <li><p>Hopefully your conclusion is not too strong for the question above. In order to say something stronger, we would have had to divide both variables into only two categories. For future research, suggest a way of dividing each variable into only two categories based on the mosaic plot above.</p></li>
