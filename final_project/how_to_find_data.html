@@ -376,13 +376,8 @@ div.tocify {
 <p class="caption">Bob Ross</p>
 </div>
 <p>I would run</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fivethirtyeight)</span></code></pre></div>
-<pre><code>## 
-## Attaching package: &#39;fivethirtyeight&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:openintro&#39;:
-## 
-##     drug_use</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(bob_ross)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fivethirtyeight)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(bob_ross)</span></code></pre></div>
 </div>
 <div id="extra-credit" class="section level1">
 <h1>Extra Credit</h1>
@@ -390,11 +385,11 @@ div.tocify {
 </div>
 <div id="outputing-your-data-somewhere-else" class="section level1">
 <h1>Outputing your data somewhere else:</h1>
-<p>There is no requirement to use R for this project. If you’re more comfortable with another program, then you are welcome to use it. However, <strong>make sure everything you do is reproducible.</strong> Document everything you do so that someone else could easily redo your work.</p>
+<p>There is no requirement to use R for this project. If you’re more comfortable with another program, then you are welcome to use it. However, <strong>if you don’t use R, then make sure everything you do is reproducible.</strong> Document everything you do so that someone else could easily redo your work.</p>
 <p>If the name of your data is “MyData” then the following code will create a csv file. Feel free to change the file name to whatever you like, as long as it ends in “.csv”. You should be able to open a csv file with Microsoft Excel, Apple Numbers, Minitab, or SPSS:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(MyData, <span class="at">file =</span> <span class="st">&quot;ThisIsMyFileName.csv&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(MyData, <span class="at">file =</span> <span class="st">&quot;ThisIsMyFileName.csv&quot;</span>)</span></code></pre></div>
 <p>Your file now exists on your computer in your working directory. If you don’t know where your working directory is try the code:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getwd</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getwd</span>()</span></code></pre></div>
 <p>The output this function gives you is the folder you need to look in for the file you just created.</p>
 </div>
 

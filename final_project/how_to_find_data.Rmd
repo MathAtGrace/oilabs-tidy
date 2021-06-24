@@ -101,7 +101,7 @@ For example, if I want to look at some data for the article "A Statistical Analy
 
 I would run
 
-```{r}
+```{r message = FALSE}
 library(fivethirtyeight)
 data(bob_ross)
 ```
@@ -114,7 +114,7 @@ You will be given two points extra credit point if the data relates to your majo
 
 # Outputing your data somewhere else:
 
-There is no requirement to use R for this project.  If you’re more comfortable with another program, then you are welcome to use it.  However, **make sure everything you do is reproducible.**  Document everything you do so that someone else could easily redo your work.
+There is no requirement to use R for this project.  If you’re more comfortable with another program, then you are welcome to use it.  However, **if you don't use R, then make sure everything you do is reproducible.**  Document everything you do so that someone else could easily redo your work.
 
 If the name of your data is “MyData” then the following code will create a csv file.  Feel free to change the file name to whatever you like, as long as it ends in “.csv”.  You should be able to open a csv file with Microsoft Excel, Apple Numbers, Minitab, or SPSS:
 
