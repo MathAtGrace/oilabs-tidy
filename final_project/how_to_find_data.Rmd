@@ -18,9 +18,9 @@ library(openintro)
 library(tidyverse)
 ```
 
-# There are several possible sources for finding data:
+There are several possible sources for finding data:
 
-## Option 1: Data Sets Used in the Textbook
+# Option 1: Data Sets Used in the Textbook
 The website for our textbook offers the option take a look at any of the data
 sets mentioned in the textbook.  These are included the the package `openintro`
 that is used in each of our lab reports.
@@ -54,7 +54,7 @@ Using a trick we learned in Lab 1, you can find the description of this data set
 
 A very important element of the description is the source website.  You’ll need to check this out before the final write up of your project.  By running the code above, I can see that the source is the National Survey of Family Growth, 2006-2010 cycle, http://www.cdc.gov/nchs/nsfg/nsfg_2006_2010_puf.htm.
 
-## Option 2: Data from public R repositories
+# Option 2: Data from public R repositories
 
 Follow the link below to a table of several data sets.
 https://vincentarelbundock.github.io/Rdatasets/datasets.html
@@ -80,7 +80,7 @@ Most of these data sets show you the source of the data if you view their help f
 
 You don't have to do your data analysis in R.  If you choose to use a different software, then make sure to document everything you do so that your work is reproducible.  You can go to the website linked above and download the data as a CSV file that you should be able to open with any statistical software.
 
-## ption 3: Data from FiveThirtyEight.com
+# Option 3: Data from FiveThirtyEight.com
 
 The website FiveThirtyEight.com has data from several articles they’ve written.  The easiest way to get their data in R is to use one of two packages that three data scientists created.
 
