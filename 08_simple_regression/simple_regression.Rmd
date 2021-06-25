@@ -49,6 +49,11 @@ To create your new lab report, in RStudio, go to New File -\> R Markdown... Then
 
 The data we're working with is in the openintro package and it's called `hfi`, short for Human Freedom Index.
 
+```{r}
+data(hfi)
+```
+
+
 1.  What are the dimensions of the dataset?
     What does each row represent?
 
@@ -120,7 +125,7 @@ plot_ss(x = pf_expression_control, y = pf_score, data = hfi_2016, showSquares = 
 
 Note that the output from the `plot_ss` function provides you with the slope and intercept of your line as well as the sum of squares.
 
-5.  Using `plot_ss`, choose a line that does a good job of minimizing the sum of squares. Run the function several times. What was the smallest sum of squares that you got? How does it compare to your neighbours?
+5.  Using `plot_ss`, choose a line that does a good job of minimizing the sum of squares. Run the function several times. What was the smallest sum of squares that you got?
 
 ## The linear model
 
@@ -189,7 +194,7 @@ When predictions are made for values of $x$ that are beyond the range of the obs
 However, predictions made within the range of the data are more reliable.
 They're also used to compute the residuals.
 
-7.  If someone saw the least squares regression line and not the actual data, how would they predict a country's personal freedom school for one with a 3 rating for `pf_expression_control`? Is this an overestimate or an underestimate, and by how much? In other words, what is the residual for this prediction?
+7.  If someone saw the least squares regression line and not the actual data, how would they predict a country's personal freedom score for one with a 3 rating for `pf_expression_control`? 
 
 ## Model diagnostics
 
@@ -221,6 +226,12 @@ After creating the scatterplot on the first layer (first line of code), we overl
 
 </br>
 
+**Constant variability**:
+
+10. Based on the residuals vs. fitted plot, does the constant variability condition appear to be violated? Why or why not?
+
+
+
 **Nearly normal residuals**: To check this condition, we can look at a histogram of the residuals.
 
 ```{r hist-res}
@@ -233,9 +244,7 @@ ggplot(data = m1_aug, aes(x = .resid)) +
 
 </br>
 
-**Constant variability**:
 
-10. Based on the residuals vs. fitted plot, does the constant variability condition appear to be violated? Why or why not?
 
 ------------------------------------------------------------------------
 
@@ -243,20 +252,16 @@ ggplot(data = m1_aug, aes(x = .resid)) +
 
 <div class="oyo">
 
--   Choose another variable that you think would strongly correlate with `pf_score`.
+11. Choose another variable that you think would strongly correlate with `pf_score`.
     Produce a scatterplot of the two variables and fit a linear model.
     At a glance, does there seem to be a linear relationship?
 
--   How does this relationship compare to the relationship between `pf_score` and `pf_expression_control`?
+12. How does this relationship compare to the relationship between `pf_score` and `pf_expression_control`?
     Use the $R^2$ values from the two model summaries to compare.
     Does your independent variable seem to predict `pf_score` better?
     Why or why not?
 
--   Check the model diagnostics using appropriate visualisations and evaluate if the model conditions have been met.
-
--   Pick another pair of variables of interest and visualise the relationship between them.
-    Do you find the relationship surprising or is it what you expected.
-    Discuss why you were interested in these variables and why you were/were not surprised by the relationship you observed.
+13. Check the model diagnostics using appropriate visualisations and evaluate if the model conditions have been met.
 
 ------------------------------------------------------------------------
 
