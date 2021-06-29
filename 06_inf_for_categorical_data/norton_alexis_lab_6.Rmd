@@ -1,0 +1,188 @@
+---
+title: "Prob and Stats Lab 6"
+author: "Alexis Norton"
+date: "`6/19/2021`"
+output: openintro::lab_report
+---
+
+```{r load-packages, message=FALSE}
+library(tidyverse)
+library(openintro)
+library(infer)
+library(janitor)
+library(gt)
+library(vcd)
+```
+
+### Exercise 1
+
+One mathematical observation I can make from the data is that there was an percent of about 35.3% which came from an amount of 4792 out of the 13583 total observations.This means that roughly 35.3% people out of the observed individuals said that they did not text and drive within the past 30 days. This percentage was largest percentage out of the data set as other people had differing amounts of how many days that they indeed did text and drive. The second largest percentage from the data set was around 34.2% which accounted for 4646 who said they did not drive in the past 30 days. 
+
+```{r code-chunk-label}
+yrbss %>%
+  tabyl(text_while_driving_30d) %>%
+  adorn_pct_formatting() %>%
+  gt()
+```
+
+### Exercise 2
+
+See codes below.
+
+```{r}
+data(yrbss)
+yrbss <- yrbss %>%
+  mutate(text_while_driving_30d = factor(text_while_driving_30d,
+                                         levels = c("did not drive",
+                                                    "0", "1-2", "3-5",
+                                                    "6-9", "10-19",
+                                                    "20-29", "30")),
+         helmet_12m = factor(helmet_12m,
+                             levels = c("did not ride", "never",
+                                        "rarely", "sometimes",
+                                        "most of time", "always")))
+yrbss %>%
+  tabyl(text_while_driving_30d) %>%
+  adorn_pct_formatting() %>%
+  gt()
+```
+
+### Exercise 3
+
+One non-total percentage out of the data set that I noticed was the 18.9% under the "Never" column concerning the "0" row from the data set which accounts for the number of people who said they did not text and drive in the past 30 days. This percentage means that 18.9% of this group claimed that they never text and drive in general. 
+
+```{r}
+yrbss %>%
+  tabyl(text_while_driving_30d, helmet_12m) %>%
+  adorn_totals("row") %>%
+  adorn_totals("col") %>%
+  adorn_percentages("all") %>%
+  adorn_pct_formatting() %>%
+  gt()
+```
+
+### Exercise 4
+
+The null hypothesis is that wearing a helmet and not texting and driving are dependent on each other. The alternative hypothesis is that wearing a helmet and not texting and driving are independent of each other. My decision came to this by looking at how the question was worded from the lab and looking at the data set which indicated that many people who claim to not text and drive most of the time do not always wear a helmet when biking. That being said, the p-value is incredibly tiny which prompted me to accept the alternative hypothesis. 
+
+```{r}
+yrbss %>%
+  select(text_while_driving_30d, helmet_12m) %>%
+  mutate(text_while_driving_30d = ifelse(text_while_driving_30d == "0",
+                                         "0", "not 0"),
+         helmet_12m = ifelse(helmet_12m == "always",
+                             "always", "not always"))
+yrbss %>%
+  mutate(text_while_driving_30d = ifelse(text_while_driving_30d == "0",
+                                         "0", "not 0"),
+         helmet_12m = ifelse(helmet_12m == "always",
+                             "always", "not always")) %>%
+  prop_test(response = text_while_driving_30d,
+            explanatory = helmet_12m,
+            order = c("always", "not always"),
+            z = TRUE) %>%
+  gt()
+```
+
+### Exercise 5
+
+The non-response bias is the bias we need to keep an eye out for because lack of responses can skew the results for the study. It can throw off our whole observations and create issues concerning accuracy and proper representation of our sample in the study. This includes about 8.83% of the population of the study as 1199/13583 x 100 equals about 8.83.
+
+### Exercise 6
+
+This confidence interval has a range from about 0.0033 and about 0.0163 indicating a wide and thus less precise area which can lead to a larger degree of uncertainty for our sampling procedure. Because of this degree of uncertainty, it helps us to verify that our small p-value gives us the ability to accept our alternative hypothesis which is that there is not evidence to declare that wearing a helmet and not texting and driving are connected. 
+
+### Exercise 7
+
+My null hypothesis is that gender and watching TV are dependent on each other. My alternative hypothesis is that gender and watching TV are independent of each other. My decision for this hypothesis came down to understanding that many circumstances that can contribute to how much TV one  may watch, so I would not say they are dependent on each other. Because our p-value was shown to be incredibly small, I am concluded that our alternative hypothesis is favored, showing independence between these two variables. 
+
+```{r}
+data("yrbss")
+yrbss %>%
+  select(gender, hours_tv_per_school_day) %>%
+    mutate(hours_tv_per_school_day = ifelse(hours_tv_per_school_day 
+  == "do not watch", "0",
+hours_tv_per_school_day),
+hours_tv_per_school_day =
+  factor(hours_tv_per_school_day,
+     levels = c("0", "<1", "1","2","3", "4", "5+"))) %>%
+  prop_test(response = 
+ hours_tv_per_school_day, explanatory = gender, order = c("male", "female"))
+```
+
+### Exercise 8
+
+NOT FINISHED
+I have looked over this problems and have tried so many ways and I really cannot figure it out. Any help would be appreciated. 
+
+```{r}
+
+```
+
+
+```{r}
+yrbss %>%
+  select(gender, hours_tv_per_school_day) %>%
+  mutate(tv = ifelse(hours_tv_per_school_day == "0",
+                                         "0", "not 0")) %>%
+  prop_test(response = tv,
+            explanatory = gender,
+            order = c("male", "female"),
+            z = TRUE) %>%
+  gt()
+```
+
+### Exercise 9
+
+My null hypothesis would be that the numbers of hours that the individuals slept and the hours of TV that they watched per school day are independent. My alternative hypothesis would be that the hours that the individuals slept and the hours of TV that they watched per school day are dependent on each other. My decision is based on looking the data and chart as a result of the code and analyzing the p-value. Logically, it does make sense to find a connection between people watching more TV and thus sleeping less. This is a fairly normal trend with children. However, the variance shown in the plot does indicate some special circumstances where there are amounts in special circumstances that are higher or lower than expected. My conclusion is that there is some connection/dependence between the amount of TV watched vs. how many hours slept. However, the connection can be solely based on TV as many other circumstances can arise that affect how long one sleeps per night especially for a student as homework and extracurricular events are often a thing. However, the small p-value does incline us to rule in favor of our alternative hypothesis.  
+
+```{r}
+data("yrbss")
+yrbss <- yrbss %>%
+  mutate(hours_tv_per_school_day =
+           ifelse(hours_tv_per_school_day == "do not watch",
+                  "0", hours_tv_per_school_day),
+         hours_tv_per_school_day =
+           factor(hours_tv_per_school_day,
+                  levels = c("0", "<1", "1",
+                             "2", "3", "4",
+                             "5+")),
+         school_night_hours_sleep =
+           factor(school_night_hours_sleep,
+                  levels = c("10+", "9", "8",
+                             "7", "6", "5",
+                             "<5")))
+X2_sleep_vs_tv <- yrbss %>%
+  tabyl(school_night_hours_sleep, hours_tv_per_school_day,
+        show_na = FALSE) %>%
+  chisq.test()
+X2_sleep_vs_tv
+X2_sleep_vs_tv$observed %>%
+  gt() %>%
+  tab_header(title = "Observed") %>%
+  tab_spanner(label = "Hours TV", columns = 2:8) %>%
+  cols_label(school_night_hours_sleep = html("Hours<br>Sleep"))
+X2_sleep_vs_tv$expected %>%
+  adorn_rounding() %>%
+  gt() %>%
+  tab_header(title = "Expected") %>%
+  tab_spanner(label = "Hours TV", columns = 2:8) %>%
+  cols_label(school_night_hours_sleep = html("Hours<br>Sleep"))
+X2_sleep_vs_tv$residuals %>%
+  adorn_rounding() %>%
+  gt() %>%
+  tab_header(title = "Residuals") %>%
+  tab_spanner(label = "Hours TV", columns = 2:8) %>%
+  cols_label(school_night_hours_sleep = html("Hours<br>Sleep"))
+yrbss %>%
+  mosaic(data = .,
+         ~ hours_tv_per_school_day + school_night_hours_sleep,
+         direction = c("v", "h"),
+         shade = TRUE)
+```
+
+### Exercise 10
+
+My suggestion would be to just offer an hour range for the two variables that could be organized into two entities. So, for numbers of slept, the two categories could be 6 and less and 7 and more (or anything hour variation like that). You could also apply that to hours of TV watched on a school day, but in my opinion, I do not think it will provide as accurate of a response because logically, I would not think most kids watching more than 7 hours of television on a school day. However, because hours is the general way to measure both TV time and sleep time (especially sleep), finding new categories combinations could be difficult.  
+...
+

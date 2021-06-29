@@ -51,7 +51,7 @@ data(yrbss)
 View(yrbss)
 ```
 
-and you can see more of what the variable names mean by
+and you can see more about this data set, including what the variable names mean by
 ```{r eval = FALSE}
 ?yrbss
 ```
@@ -75,15 +75,14 @@ yrbss %>%
 ```{r}
 data(yrbss)
 yrbss <- yrbss %>%
-  mutate(text_while_driving_30d = factor(text_while_driving_30d,
-                                         levels = c("did not drive",
-                                                    "0", "1-2", "3-5",
-                                                    "6-9", "10-19",
-                                                    "20-29", "30")),
-         helmet_12m = factor(helmet_12m,
-                             levels = c("did not ride", "never",
-                                        "rarely", "sometimes",
-                                        "most of time", "always")))
+  mutate(text_while_driving_30d =
+           factor(text_while_driving_30d,
+                  levels = c("did not drive","0","1-2","3-5",
+                             "6-9", "10-19","20-29", "30")),
+         helmet_12m =
+           factor(helmet_12m,
+                  levels = c("did not ride", "never", "rarely",
+                             "sometimes", "most of time", "always")))
 ```
 
 The `janitor` package let's us go a step further than using `count()` like in previous labs, because it can create 2-way tables, and then easily "adorn" them with totals, percentages, etc.
@@ -109,10 +108,10 @@ Our first problem with answering this question is that both of these questions h
 ```{r view-two-proportions-view, eval=FALSE}
 yrbss %>%
   select(text_while_driving_30d, helmet_12m) %>%
-  mutate(text_while_driving_30d = ifelse(text_while_driving_30d == "0",
-                                         "0", "not 0"),
-         helmet_12m = ifelse(helmet_12m == "always",
-                             "always", "not always")) %>%
+  mutate(text_while_driving_30d =
+           ifelse(text_while_driving_30d == "0", "0", "not 0"),
+         helmet_12m =
+           ifelse(helmet_12m == "always", "always", "not always")) %>%
   View()
 ```
 
@@ -124,15 +123,21 @@ To find the point estimate we only need to add one line to the end of the code a
 
 ```{r two-proportions}
 yrbss %>%
+  #first, recode text_whild_driving to  "0" and "not 0"
   mutate(text_while_driving_30d = ifelse(text_while_driving_30d == "0",
                                          "0", "not 0"),
+         #then recode helmet_12m to be only "always" and "not always"
          helmet_12m = ifelse(helmet_12m == "always",
                              "always", "not always")) %>%
+  #Then do a hypothesis
   prop_test(response = text_while_driving_30d,
             explanatory = helmet_12m,
+            #order the explanatory variable to be "always" - "not always"
             order = c("always", "not always"),
-            z = TRUE) %>%
-  gt()
+            #define which category in the response variable we want to count
+            success = "0",
+            z = TRUE) %>% #this forces R to do proportions instead of chi-squared
+  gt() #this makes the output pretty
 ```
 
 1.  Summarize what we just did by first writing the null and alternative hypothesis in words, then pasting the code chunk above, and finally, by writing a decision and conclusion based on the p-value you computed.
@@ -145,11 +150,9 @@ yrbss %>%
 
 Are males or females more likely to say they do not watch TV?
 
-2.  Follow similar steps above to completet a hypothesis test to check whether gender and not watching TV are dependent or independent.  Make sure to state your null and alternative hypothesis in English, include your code, and interpret your decision and conclusion.
+2.  Follow similar steps above to complete a hypothesis test to check whether gender and not watching TV are dependent or independent.  Make sure to state your null and alternative hypothesis in English, include your code, and interpret your decision and conclusion. *Hint:* you should be able to copy/paste the code chunk above that computed a p-value and swap in new variable names and recode new categories to complete this problem, and you don't need to recode `gender` because there are already only two categories.  Also, you don't need to include all of the `r #comments` I left in the code chunk because those only to help you understand what's going on.
 
-*Hint:* you should be able to copy/paste the code chunk above that computed a p-value and swap in new variable names and recode new categories to complete the problem above.  You don't need to recode `gender` because there are already only two categories.
-
-1.  Follow similar steps above to find the confidence interval for the hours of TV watched by females minus the hours of TV watched by males on school nights.  Show your code and interpret your results in context of the data.
+1.  The code you ran for the last problem should have also given you the confidence interval.  Interpret your confidence interval in the context of the data.
 
 
 ## Chi-Squared Test for Independence
@@ -184,7 +187,7 @@ It's pretty typical to spend more time, effort, and lines of code cleaning your 
 
 ### Chi Squared Test
 
-But we need to refocus and get back to our chi-squared test.  We can run a chi-squared test on this data by creating a two-way table and then passing it to the function `chisq.test()`.
+But we need to refocus and get back to our chi-squared test.  Now that we have tidied up the categories of our variables, we can run a chi-squared test on this data by creating a two-way table and then passing it to the function `chisq.test()`.
 
 ```{r chi-squared, warning=FALSE}
 X2_sleep_vs_tv <- yrbss %>%
@@ -210,7 +213,8 @@ X2_sleep_vs_tv$observed %>%
   cols_label(school_night_hours_sleep = html("Hours<br>Sleep"))
 ```
 
-the expected values,
+the expected values.  Recall from section 6.4 that 
+$$ \text{Expected} = \frac{\text{Row-total} \times \text{Column-total}}{\text{Sum-total}}$$
 
 ```{r}
 X2_sleep_vs_tv$expected %>%
