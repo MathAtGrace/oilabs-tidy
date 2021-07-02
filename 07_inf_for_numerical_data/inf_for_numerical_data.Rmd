@@ -120,7 +120,7 @@ In order to answer this question we will conduct a hypothesis test.
 3.  Are all conditions necessary for inference satisfied?  (See sections 7.1 and 7.3)
     Comment on each.
 
-4.  Write the hypotheses for testing if the average weights are different for those who exercise at least times a week and those who don't.
+4.  Write the hypotheses for testing if the average weights are different for those who exercise at least 3 times a week and those who don't.
 
 Next, we will work through creating a permutation distribution using tools from the **infer** package.
 
@@ -179,7 +179,7 @@ p_value
 7.  What warning message do you get?
     Why do you think you get this warning message?
     
-8.  Write a decision and conclusion for this hypothesis test.
+8.  Copy the code above needed to compute the p-value.  Then write a decision and conclusion for this hypothesis test.
 
 
 
@@ -199,12 +199,21 @@ null_dist %>%
 
 ## More Practice
 
+Below is code that calculates a simple confidence interval for `weight`.
+```{r}
+yrbss %>% 
+  specify(response = weight) %>% 
+  generate(reps = 1000) %>% 
+  calculate(stat = "mean") %>% 
+  get_ci(level = 0.95)
+```
+
 9.  Calculate a 95% confidence interval for the average height in meters (`height`) and interpret it in context.
 
 10. Calculate a new confidence interval for the same parameter at the 90% confidence level.
     Comment on the width of this interval versus the one obtained in the previous exercise.
 
-11. Conduct a hypothesis test evaluating whether the average height is different for those who exercise at least three times a week and those who don't.
+11. Conduct a hypothesis test evaluating whether the average height is different for those who exercise at least three times a week and those who don't.  Include (a) your null and alternative hypothesis (b) the code to do your computations, and (c) your decision and conclusion.
 
 
 ------------------------------------------------------------------------
