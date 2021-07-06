@@ -41,6 +41,12 @@ library(statsr)
 library(broom)
 ```
 
+If you haven't installed `statsr` on your computer yet, you might need to run
+```{r eval=FALSE}
+install.packages("statsr")
+```
+in your console.
+
 ### Creating a reproducible lab report
 
 To create your new lab report, in RStudio, go to New File -\> R Markdown... Then, choose From Template and then choose `Lab Report for OpenIntro Statistics Labs` from the list of templates.
@@ -58,7 +64,7 @@ data(hfi)
     What does each row represent?
 
 2.  The dataset spans a lot of years, but we are only interested in data from year 2016.
-    Filter the data `hfi` data frame for year 2016, select the six variables, and assign the result to a data frame named `hfi_2016`.
+    Copy and paste the code below to filter the data `hfi` data frame for year 2016 and assign the result to a data frame named `hfi_2016`.
 
 ```{r include = FALSE}
 hfi_2016 <- hfi %>% 

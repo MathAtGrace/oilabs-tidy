@@ -34,7 +34,7 @@ library(skimr)
 ```
 
 If you haven't installed `skimr` on your computer yet, you might need to run
-```{r}
+```{r eval=FALSE}
 install.packages("skimr")
 ```
 in your console.
